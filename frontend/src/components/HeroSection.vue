@@ -6,15 +6,15 @@
         <div class="lg:col-span-6">
           <div class="text-center lg:text-left">
             <h1 class="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 leading-tight">
-              Building
+              Welcome to
               <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600">
-                Digital Excellence
+                Ascratech
               </span>
-              for Tomorrow
+              Solutions
             </h1>
             <p class="mt-6 text-xl text-gray-600 max-w-3xl">
-              We craft innovative software solutions that transform businesses and create exceptional user experiences. 
-              From web applications to mobile apps, we bring your vision to life with cutting-edge technology.
+              Your trusted partner for innovative technology solutions and business transformation. 
+              We specialize in ERP systems, custom software development, and digital solutions that drive growth.
             </p>
             <div class="mt-8 flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
               <Button theme="blue" variant="solid" size="lg" class="px-8 py-3">
@@ -28,16 +28,16 @@
             <!-- Stats -->
             <div class="mt-12 grid grid-cols-3 gap-8 text-center lg:text-left">
               <div>
-                <div class="text-3xl font-bold text-blue-600">150+</div>
-                <div class="text-sm text-gray-600">Projects Delivered</div>
+                <div class="text-3xl font-bold text-blue-600">50+</div>
+                <div class="text-sm text-gray-600">ERP Implementations</div>
               </div>
               <div>
-                <div class="text-3xl font-bold text-purple-600">98%</div>
-                <div class="text-sm text-gray-600">Client Satisfaction</div>
+                <div class="text-3xl font-bold text-purple-600">100%</div>
+                <div class="text-sm text-gray-600">Client Success Rate</div>
               </div>
               <div>
-                <div class="text-3xl font-bold text-green-600">5+</div>
-                <div class="text-sm text-gray-600">Years Experience</div>
+                <div class="text-3xl font-bold text-green-600">24/7</div>
+                <div class="text-sm text-gray-600">Support Available</div>
               </div>
             </div>
           </div>
