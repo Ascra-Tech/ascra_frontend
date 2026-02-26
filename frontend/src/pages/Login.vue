@@ -86,10 +86,10 @@
               </div>
               <div class="ml-3">
                 <h3 class="text-sm font-medium text-red-800">
-                  Authentication failed
+                  {{ getErrorTitle() }}
                 </h3>
                 <div class="mt-2 text-sm text-red-700">
-                  <p>{{ session.login.error.message || 'Invalid email or password. Please try again.' }}</p>
+                  <p>{{ getErrorMessage() }}</p>
                 </div>
               </div>
             </div>
@@ -134,9 +134,41 @@ function submit(e) {
 	// Debug logging
 	console.log('Login attempt with:', {
 		email: credentials.email,
-		passwordLength: credentials.password ? credentials.password.length : 0
+		passwordLength: credentials.password && typeof credentials.password === 'string' ? credentials.password.length : 0
 	})
 	
 	session.login.submit(credentials)
+}
+
+function getErrorTitle() {
+	if (!session.login.error) return ''
+	
+	const error = session.login.error
+	const errorMessage = error.message || error.toString()
+	
+	if (errorMessage.includes('AuthenticationError') || errorMessage.includes('Invalid login credentials')) {
+		return 'Login Failed'
+	} else if (errorMessage.includes('NetworkError') || errorMessage.includes('Connection')) {
+		return 'Connection Error'
+	} else {
+		return 'Authentication Error'
+	}
+}
+
+function getErrorMessage() {
+	if (!session.login.error) return ''
+	
+	const error = session.login.error
+	const errorMessage = error.message || error.toString()
+	
+	if (errorMessage.includes('AuthenticationError') || errorMessage.includes('Invalid login credentials')) {
+		return 'The email or password you entered is incorrect. Please check your credentials and try again.'
+	} else if (errorMessage.includes('NetworkError') || errorMessage.includes('Connection')) {
+		return 'Unable to connect to the server. Please check your internet connection and try again.'
+	} else if (errorMessage.includes('User does not exist') || errorMessage.includes('not found')) {
+		return 'No account found with this email address. Please check your email or contact your administrator.'
+	} else {
+		return 'Login failed. Please try again or contact support if the problem persists.'
+	}
 }
 </script>

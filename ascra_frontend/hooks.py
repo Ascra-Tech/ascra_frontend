@@ -70,8 +70,18 @@ app_license = "mit"
 # automatically create page for each record of this doctype
 # website_generators = ["Web Page"]
 
+# website_route_rules = [
+# 	{"from_route": "/<path:app_path>", "to_route": "frontend"},
+# ]
+
+# More specific route rules to avoid overriding Frappe's standard routes
 website_route_rules = [
-	{"from_route": "/<path:app_path>", "to_route": "frontend"},
+	{"from_route": "/", "to_route": "frontend"},
+	{"from_route": "/home", "to_route": "frontend"},
+	{"from_route": "/dashboard", "to_route": "frontend"},
+	{"from_route": "/employee-dashboard", "to_route": "frontend"},
+	{"from_route": "/account/login", "to_route": "frontend"},
+	{"from_route": "/account/signup", "to_route": "frontend"},
 ]
 
 # Jinja

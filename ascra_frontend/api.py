@@ -12,19 +12,31 @@ def create_user_account(email, first_name, last_name, password, company=None):
     try:
         # Validate email
         if not email or not validate_email_address(email):
-            frappe.throw(_("Please enter a valid email address"))
+            return {
+                "success": False,
+                "message": "Please enter a valid email address"
+            }
         
         # Check if user already exists
         if frappe.db.exists("User", email):
-            frappe.throw(_("User with this email already exists"))
+            return {
+                "success": False,
+                "message": "User with this email already exists"
+            }
         
         # Validate names
         if not first_name or not last_name:
-            frappe.throw(_("First name and last name are required"))
+            return {
+                "success": False,
+                "message": "First name and last name are required"
+            }
         
         # Validate password
         if not password or len(password.strip()) < 8:
-            frappe.throw(_("Password must be at least 8 characters long"))
+            return {
+                "success": False,
+                "message": "Password must be at least 8 characters long"
+            }
         
         # Create full name
         full_name = f"{first_name.strip()} {last_name.strip()}"
@@ -73,13 +85,22 @@ def create_user_account(email, first_name, last_name, password, company=None):
         }
         
     except frappe.DuplicateEntryError:
-        frappe.throw(_("User with this email already exists"))
+        return {
+            "success": False,
+            "message": "User with this email already exists"
+        }
     except frappe.ValidationError as e:
-        frappe.log_error(f"User validation error: {str(e)}")
-        frappe.throw(str(e))
+        print(f"User validation error: {str(e)}")
+        return {
+            "success": False,
+            "message": str(e)
+        }
     except Exception as e:
-        frappe.log_error(f"User creation error: {str(e)}")
-        frappe.throw(f"An error occurred while creating your account: {str(e)}")
+        print(f"User creation error: {str(e)}")
+        return {
+            "success": False,
+            "message": f"An error occurred while creating your account: {str(e)}"
+        }
 
 @frappe.whitelist(allow_guest=True)
 def login_user(email, password):
@@ -89,29 +110,44 @@ def login_user(email, password):
     try:
         # Validate input
         if not email or not password:
-            frappe.throw(_("Email and password are required"))
+            return {
+                "success": False,
+                "message": "Email and password are required"
+            }
         
         # Validate email format
         if not validate_email_address(email):
-            frappe.throw(_("Please enter a valid email address"))
+            return {
+                "success": False,
+                "message": "Please enter a valid email address"
+            }
         
         # Check if user exists
         if not frappe.db.exists("User", email):
-            frappe.throw(_("Invalid email or password"))
+            return {
+                "success": False,
+                "message": "Invalid email or password"
+            }
         
         # Get user document
         user = frappe.get_doc("User", email)
         
         # Check if user is enabled
         if not user.enabled:
-            frappe.throw(_("Your account has been disabled. Please contact administrator."))
+            return {
+                "success": False,
+                "message": "Your account has been disabled. Please contact administrator."
+            }
         
         # Verify password
         from frappe.utils.password import check_password
         try:
             check_password(email, password)
         except frappe.AuthenticationError:
-            frappe.throw(_("Invalid email or password"))
+            return {
+                "success": False,
+                "message": "Invalid email or password"
+            }
         
         # Simple authentication - let the frontend handle session management
         # Just verify credentials and return user info
@@ -128,11 +164,17 @@ def login_user(email, password):
         }
         
     except Exception as e:
-        frappe.log_error(f"Login error: {str(e)}")
+        print(f"Login error: {str(e)}")
         if isinstance(e, frappe.AuthenticationError):
-            frappe.throw(_("Invalid email or password"))
+            return {
+                "success": False,
+                "message": "Invalid email or password"
+            }
         else:
-            frappe.throw(str(e))
+            return {
+                "success": False,
+                "message": str(e)
+            }
 
 @frappe.whitelist(allow_guest=True)
 def check_email_availability(email):
@@ -166,11 +208,17 @@ def create_lead_and_contact(data):
         required_fields = ['first_name', 'last_name', 'email', 'phone', 'company_name', 'message']
         for field in required_fields:
             if not data.get(field):
-                frappe.throw(_(f"{field.replace('_', ' ').title()} is required"))
+                return {
+                    "success": False,
+                    "message": f"{field.replace('_', ' ').title()} is required"
+                }
         
         # Validate email
         if not validate_email_address(data['email']):
-            frappe.throw(_("Please enter a valid email address"))
+            return {
+                "success": False,
+                "message": "Please enter a valid email address"
+            }
         
         # Create Lead
         lead_doc = {
@@ -251,8 +299,11 @@ def create_lead_and_contact(data):
         }
         
     except Exception as e:
-        frappe.log_error(f"Lead/Contact creation error: {str(e)}")
-        frappe.throw(f"An error occurred while processing your request: {str(e)}")
+        print(f"Lead/Contact creation error: {str(e)}")
+        return {
+            "success": False,
+            "message": f"An error occurred while processing your request: {str(e)}"
+        }
 
 @frappe.whitelist()
 def get_user_roles():
@@ -293,26 +344,31 @@ def get_employee_info():
         if "Employee" not in user_roles:
             frappe.throw(_("Access denied. Employee role required."))
         
-        # Get employee record
-        employee = frappe.db.get_value("Employee", {"user_id": user}, "*")
-        if not employee:
+        # Get employee record directly from database
+        employee_data = frappe.db.get_value("Employee", {"user_id": user}, [
+            "name", "employee_name", "designation", "department", "company", 
+            "branch", "employee_number", "date_of_joining", "status", "image"
+        ], as_dict=True)
+        
+        if not employee_data:
             frappe.throw(_("Employee record not found for this user"))
         
-        employee_doc = frappe.get_doc("Employee", employee.name)
+        # If employee_number is None, use the employee name (HR-EMP-00001) as fallback
+        employee_id = employee_data.employee_number or employee_data.name
         
         return {
             "success": True,
             "employee": {
-                "name": employee_doc.name,
-                "employee_name": employee_doc.employee_name,
-                "designation": employee_doc.designation,
-                "department": employee_doc.department,
-                "company": employee_doc.company,
-                "branch": employee_doc.branch,
-                "employee_number": employee_doc.employee_number,
-                "date_of_joining": employee_doc.date_of_joining,
-                "status": employee_doc.status,
-                "image": employee_doc.image
+                "name": employee_data.name,
+                "employee_name": employee_data.employee_name,
+                "designation": employee_data.designation or "Employee",
+                "department": employee_data.department or "General",
+                "company": employee_data.company,
+                "branch": employee_data.branch,
+                "employee_number": employee_id,
+                "date_of_joining": employee_data.date_of_joining,
+                "status": employee_data.status,
+                "image": employee_data.image
             }
         }
         
@@ -321,7 +377,7 @@ def get_employee_info():
         frappe.throw(str(e))
 
 @frappe.whitelist()
-def mark_attendance(status="Present", attendance_date=None):
+def mark_attendance(status="Present", attendance_date=None, in_time=None, out_time=None):
     """
     Mark attendance for current employee
     """
@@ -335,10 +391,13 @@ def mark_attendance(status="Present", attendance_date=None):
         if "Employee" not in user_roles:
             frappe.throw(_("Access denied. Employee role required."))
         
-        # Get employee record
-        employee = frappe.db.get_value("Employee", {"user_id": user}, "name")
-        if not employee:
+        # Get employee record with company information
+        employee_data = frappe.db.get_value("Employee", {"user_id": user}, ["name", "company"], as_dict=True)
+        if not employee_data:
             frappe.throw(_("Employee record not found for this user"))
+        
+        employee = employee_data.name
+        company = employee_data.company
         
         # Use today's date if not provided
         if not attendance_date:
@@ -352,20 +411,44 @@ def mark_attendance(status="Present", attendance_date=None):
         })
         
         if existing_attendance:
-            frappe.throw(_("Attendance already marked for this date"))
+            # Get the existing attendance details
+            existing_record = frappe.get_doc("Attendance", existing_attendance)
+            return {
+                "success": False,
+                "message": _("Attendance already marked for {0} as {1}").format(
+                    frappe.utils.formatdate(attendance_date), 
+                    existing_record.status
+                ),
+                "attendance_id": existing_attendance,
+                "already_exists": True
+            }
         
-        # Create attendance record
+        # Create attendance record with required fields
         attendance_doc = {
             "doctype": "Attendance",
             "employee": employee,
             "attendance_date": attendance_date,
-            "status": status,
-            "in_time": now_datetime() if status == "Present" else None
+            "company": company,
+            "status": status
         }
+        
+        # Add time fields if provided
+        if in_time:
+            attendance_doc["in_time"] = in_time
+        elif status == "Present":
+            attendance_doc["in_time"] = now_datetime()
+            
+        if out_time:
+            attendance_doc["out_time"] = out_time
         
         attendance = frappe.get_doc(attendance_doc)
         attendance.flags.ignore_permissions = True
+        attendance.flags.ignore_mandatory = True
+        
+        # Insert the attendance record
         attendance.insert()
+        
+        # Submit the attendance record
         attendance.submit()
         
         return {
@@ -374,9 +457,14 @@ def mark_attendance(status="Present", attendance_date=None):
             "attendance_id": attendance.name
         }
         
+    except frappe.DuplicateEntryError:
+        frappe.throw(_("Attendance already exists for this date"))
+    except frappe.ValidationError as ve:
+        frappe.log_error(f"Attendance validation error: {str(ve)}")
+        frappe.throw(_("Validation error: {0}").format(str(ve)))
     except Exception as e:
         frappe.log_error(f"Mark attendance error: {str(e)}")
-        frappe.throw(str(e))
+        frappe.throw(_("Failed to mark attendance: {0}").format(str(e)))
 
 @frappe.whitelist()
 def get_attendance_records(from_date=None, to_date=None):
@@ -386,45 +474,80 @@ def get_attendance_records(from_date=None, to_date=None):
     try:
         user = frappe.session.user
         if user == "Guest":
-            frappe.throw(_("Please login to view attendance"))
+            return {
+                "success": False,
+                "message": "Please login to view attendance",
+                "attendance_records": []
+            }
         
         # Check if user has Employee role
         user_roles = frappe.get_roles(user)
         if "Employee" not in user_roles:
-            frappe.throw(_("Access denied. Employee role required."))
+            return {
+                "success": False,
+                "message": "Access denied. Employee role required.",
+                "attendance_records": []
+            }
         
         # Get employee record
         employee = frappe.db.get_value("Employee", {"user_id": user}, "name")
         if not employee:
-            frappe.throw(_("Employee record not found for this user"))
+            return {
+                "success": False,
+                "message": "Employee record not found for this user",
+                "attendance_records": []
+            }
         
-        # Set default date range if not provided
-        if not from_date:
-            from_date = frappe.utils.add_days(today(), -30)  # Last 30 days
-        if not to_date:
-            to_date = today()
+        # Build filters for attendance records
+        filters = {"employee": employee}
         
-        # Get attendance records
+        # Only add date filtering if dates are provided
+        if from_date and to_date:
+            filters["attendance_date"] = ["between", [from_date, to_date]]
+        elif from_date:
+            filters["attendance_date"] = [">=", from_date]
+        elif to_date:
+            filters["attendance_date"] = ["<=", to_date]
+        
+        # Get attendance records with a reasonable limit to prevent data overflow
         attendance_records = frappe.get_all("Attendance", 
-            filters={
-                "employee": employee,
-                "attendance_date": ["between", [from_date, to_date]],
-                "docstatus": ["!=", 2]
-            },
-            fields=["name", "attendance_date", "status", "in_time", "out_time", "working_hours"],
-            order_by="attendance_date desc"
+            filters=filters,
+            fields=["name", "attendance_date", "status", "in_time", "out_time", "working_hours", "docstatus"],
+            order_by="attendance_date desc",
+            limit=100  # Limit to prevent CharacterLengthExceededError
         )
+        
+        # Add docstatus labels for frontend display
+        for record in attendance_records:
+            if record.docstatus == 0:
+                record.docstatus_label = "Draft"
+            elif record.docstatus == 1:
+                record.docstatus_label = "Submitted"
+            elif record.docstatus == 2:
+                record.docstatus_label = "Cancelled"
+        
+        # Debug logging (simplified to avoid character length errors)
+        print(f"Attendance API Debug - Employee: {employee}, Records found: {len(attendance_records)}")
         
         return {
             "success": True,
             "attendance_records": attendance_records,
             "from_date": from_date,
-            "to_date": to_date
+            "to_date": to_date,
+            "debug_info": {
+                "employee": employee,
+                "total_records": len(attendance_records),
+                "date_range": f"{from_date} to {to_date}"
+            }
         }
         
     except Exception as e:
-        frappe.log_error(f"Get attendance records error: {str(e)}")
-        frappe.throw(str(e))
+        print(f"Get attendance records error: {str(e)}")
+        return {
+            "success": False,
+            "message": f"Failed to load attendance records: {str(e)}",
+            "attendance_records": []
+        }
 
 @frappe.whitelist()
 def get_salary_slips(from_date=None, to_date=None):
@@ -434,35 +557,58 @@ def get_salary_slips(from_date=None, to_date=None):
     try:
         user = frappe.session.user
         if user == "Guest":
-            frappe.throw(_("Please login to view salary slips"))
+            return {
+                "success": False,
+                "message": "Please login to view salary slips",
+                "salary_slips": []
+            }
         
         # Check if user has Employee role
         user_roles = frappe.get_roles(user)
         if "Employee" not in user_roles:
-            frappe.throw(_("Access denied. Employee role required."))
+            return {
+                "success": False,
+                "message": "Access denied. Employee role required.",
+                "salary_slips": []
+            }
         
         # Get employee record
         employee = frappe.db.get_value("Employee", {"user_id": user}, "name")
         if not employee:
-            frappe.throw(_("Employee record not found for this user"))
+            return {
+                "success": False,
+                "message": "Employee record not found for this user",
+                "salary_slips": []
+            }
         
-        # Set default date range if not provided (last 12 months)
-        if not from_date:
-            from_date = frappe.utils.add_months(today(), -12)
-        if not to_date:
-            to_date = today()
+        # Build filters for salary slips
+        filters = {"employee": employee}
         
-        # Get salary slips
+        # Only add date filtering if dates are provided
+        if from_date and to_date:
+            filters["start_date"] = [">=", from_date]
+            filters["end_date"] = ["<=", to_date]
+        elif from_date:
+            filters["start_date"] = [">=", from_date]
+        elif to_date:
+            filters["end_date"] = ["<=", to_date]
+        
+        # Get salary slips with a reasonable limit to prevent data overflow
         salary_slips = frappe.get_all("Salary Slip",
-            filters={
-                "employee": employee,
-                "start_date": [">=", from_date],
-                "end_date": ["<=", to_date],
-                "docstatus": 1
-            },
-            fields=["name", "start_date", "end_date", "gross_pay", "total_deduction", "net_pay", "posting_date"],
-            order_by="start_date desc"
+            filters=filters,
+            fields=["name", "start_date", "end_date", "gross_pay", "total_deduction", "net_pay", "posting_date", "status", "docstatus"],
+            order_by="start_date desc",
+            limit=50  # Limit to prevent CharacterLengthExceededError
         )
+        
+        # Add docstatus labels for frontend display
+        for record in salary_slips:
+            if record.docstatus == 0:
+                record.docstatus_label = "Draft"
+            elif record.docstatus == 1:
+                record.docstatus_label = "Submitted"
+            elif record.docstatus == 2:
+                record.docstatus_label = "Cancelled"
         
         return {
             "success": True,
@@ -471,10 +617,132 @@ def get_salary_slips(from_date=None, to_date=None):
         
     except Exception as e:
         frappe.log_error(f"Get salary slips error: {str(e)}")
-        frappe.throw(str(e))
+        return {
+            "success": False,
+            "message": f"Failed to load salary slips: {str(e)}",
+            "salary_slips": []
+        }
+
 
 @frappe.whitelist()
-def apply_leave(leave_type, from_date, to_date, description, half_day=0, half_day_date=None):
+def download_salary_slip_pdf(salary_slip_name, print_format="Salary Slip Standard"):
+    """
+    Download salary slip as PDF with specified print format
+    """
+    try:
+        user = frappe.session.user
+        if user == "Guest":
+            frappe.throw(_("Please login to download salary slip"))
+        
+        # Get employee record
+        employee = frappe.db.get_value("Employee", {"user_id": user}, "name")
+        if not employee:
+            frappe.throw(_("No employee record found for current user"))
+        
+        # Verify the salary slip belongs to the current employee
+        salary_slip = frappe.get_doc("Salary Slip", salary_slip_name)
+        if salary_slip.employee != employee:
+            frappe.throw(_("You can only download your own salary slips"))
+        
+        # Validate print format exists and is for Salary Slip
+        valid_formats = ["Salary Slip Standard", "Salary Slip with Year to Date", "Salary Slip based on Timesheet"]
+        if print_format not in valid_formats:
+            print_format = "Salary Slip Standard"  # Default fallback
+        
+        # Generate PDF using Frappe's built-in PDF generation
+        from frappe.utils.pdf import get_pdf
+        
+        # Get the print format HTML
+        html = frappe.get_print("Salary Slip", salary_slip_name, print_format=print_format)
+        
+        # Generate PDF
+        pdf = get_pdf(html)
+        
+        # Set response headers for download
+        frappe.local.response.filename = f"salary_slip_{salary_slip_name}_{print_format.replace(' ', '_')}.pdf"
+        frappe.local.response.filecontent = pdf
+        frappe.local.response.type = "download"
+        
+        return {
+            "success": True,
+            "message": "PDF generated successfully"
+        }
+        
+    except Exception as e:
+        frappe.log_error(f"Download salary slip PDF error: {str(e)}")
+        return {
+            "success": False,
+            "message": str(e)
+        }
+
+@frappe.whitelist()
+def get_salary_slip_html(salary_slip_name, print_format="Salary Slip Standard"):
+    """
+    Get salary slip HTML for preview with specified print format
+    """
+    try:
+        user = frappe.session.user
+        if user == "Guest":
+            frappe.throw(_("Please login to view salary slip"))
+        
+        # Get employee record
+        employee = frappe.db.get_value("Employee", {"user_id": user}, "name")
+        if not employee:
+            frappe.throw(_("No employee record found for current user"))
+        
+        # Verify the salary slip belongs to the current employee
+        salary_slip = frappe.get_doc("Salary Slip", salary_slip_name)
+        if salary_slip.employee != employee:
+            frappe.throw(_("You can only view your own salary slips"))
+        
+        # Validate print format exists and is for Salary Slip
+        valid_formats = ["Salary Slip Standard", "Salary Slip with Year to Date", "Salary Slip based on Timesheet"]
+        if print_format not in valid_formats:
+            print_format = "Salary Slip Standard"  # Default fallback
+        
+        # Get the print format HTML
+        html = frappe.get_print("Salary Slip", salary_slip_name, print_format=print_format)
+        
+        return {
+            "success": True,
+            "html": html,
+            "print_format": print_format
+        }
+        
+    except Exception as e:
+        frappe.log_error(f"Get salary slip HTML error: {str(e)}")
+        return {
+            "success": False,
+            "message": str(e)
+        }
+
+@frappe.whitelist()
+def get_salary_slip_print_formats():
+    """
+    Get available print formats for salary slips
+    """
+    try:
+        # Return the available salary slip print formats
+        formats = [
+            {"name": "Salary Slip Standard", "label": "Standard Format"},
+            {"name": "Salary Slip with Year to Date", "label": "With Year to Date"},
+            {"name": "Salary Slip based on Timesheet", "label": "Based on Timesheet"}
+        ]
+        
+        return {
+            "success": True,
+            "print_formats": formats
+        }
+        
+    except Exception as e:
+        frappe.log_error(f"Get salary slip print formats error: {str(e)}")
+        return {
+            "success": False,
+            "message": str(e)
+        }
+
+@frappe.whitelist()
+def apply_leave(leave_type, from_date, to_date, description="", half_day=0, half_day_date=None):
     """
     Apply for leave
     """
@@ -488,23 +756,44 @@ def apply_leave(leave_type, from_date, to_date, description, half_day=0, half_da
         if "Employee" not in user_roles:
             frappe.throw(_("Access denied. Employee role required."))
         
-        # Get employee record
-        employee = frappe.db.get_value("Employee", {"user_id": user}, "name")
-        if not employee:
+        # Get employee record with company information
+        employee_data = frappe.db.get_value("Employee", {"user_id": user}, ["name", "company"], as_dict=True)
+        if not employee_data:
             frappe.throw(_("Employee record not found for this user"))
         
-        # Create leave application
+        employee = employee_data.name
+        company = employee_data.company
+        
+        # Validate required fields
+        if not leave_type:
+            frappe.throw(_("Leave Type is required"))
+        if not from_date:
+            frappe.throw(_("From Date is required"))
+        if not to_date:
+            frappe.throw(_("To Date is required"))
+        
+        # Get employee name for leave application
+        employee_name = frappe.db.get_value("Employee", employee, "employee_name")
+        
+        # Create leave application with all required fields
         leave_app_doc = {
             "doctype": "Leave Application",
             "employee": employee,
+            "employee_name": employee_name,
             "leave_type": leave_type,
             "from_date": from_date,
             "to_date": to_date,
-            "description": description,
-            "half_day": int(half_day),
+            "description": description or "",
+            "company": company,
+            "half_day": int(half_day) if half_day else 0,
             "half_day_date": half_day_date if half_day else None,
-            "status": "Open"
+            "status": "Open",
+            "posting_date": today(),
+            "leave_approver": frappe.db.get_value("Employee", employee, "leave_approver")
         }
+        
+        # Remove None values
+        leave_app_doc = {k: v for k, v in leave_app_doc.items() if v is not None}
         
         leave_app = frappe.get_doc(leave_app_doc)
         leave_app.flags.ignore_permissions = True
@@ -516,35 +805,71 @@ def apply_leave(leave_type, from_date, to_date, description, half_day=0, half_da
             "leave_application_id": leave_app.name
         }
         
+    except frappe.ValidationError as ve:
+        error_msg = str(ve)
+        frappe.log_error(f"Leave application validation error: {error_msg}")
+        return {
+            "success": False,
+            "message": f"Validation error: {error_msg}"
+        }
     except Exception as e:
-        frappe.log_error(f"Apply leave error: {str(e)}")
-        frappe.throw(str(e))
+        error_msg = str(e)
+        frappe.log_error(f"Apply leave error: {error_msg}")
+        return {
+            "success": False,
+            "message": f"Failed to submit leave application: {error_msg}"
+        }
 
 @frappe.whitelist()
-def get_leave_applications():
+def get_leave_applications(from_date=None, to_date=None):
     """
-    Get leave applications for current employee
+    Get leave applications for current employee with optional date filtering
     """
     try:
         user = frappe.session.user
         if user == "Guest":
-            frappe.throw(_("Please login to view leave applications"))
+            return {
+                "success": False,
+                "message": "Please login to view leave applications",
+                "leave_applications": []
+            }
         
         # Check if user has Employee role
         user_roles = frappe.get_roles(user)
         if "Employee" not in user_roles:
-            frappe.throw(_("Access denied. Employee role required."))
+            return {
+                "success": False,
+                "message": "Access denied. Employee role required.",
+                "leave_applications": []
+            }
         
         # Get employee record
         employee = frappe.db.get_value("Employee", {"user_id": user}, "name")
         if not employee:
-            frappe.throw(_("Employee record not found for this user"))
+            return {
+                "success": False,
+                "message": "Employee record not found for this user",
+                "leave_applications": []
+            }
         
-        # Get leave applications
+        # Build filters for leave applications
+        filters = {"employee": employee}
+        
+        # Only add date filtering if dates are provided
+        if from_date and to_date:
+            filters["from_date"] = [">=", from_date]
+            filters["to_date"] = ["<=", to_date]
+        elif from_date:
+            filters["from_date"] = [">=", from_date]
+        elif to_date:
+            filters["to_date"] = ["<=", to_date]
+        
+        # Get leave applications with a reasonable limit to prevent data overflow
         leave_applications = frappe.get_all("Leave Application",
-            filters={"employee": employee},
+            filters=filters,
             fields=["name", "leave_type", "from_date", "to_date", "total_leave_days", "description", "status", "posting_date"],
-            order_by="posting_date desc"
+            order_by="posting_date desc",
+            limit=50  # Limit to prevent CharacterLengthExceededError
         )
         
         return {
@@ -554,7 +879,11 @@ def get_leave_applications():
         
     except Exception as e:
         frappe.log_error(f"Get leave applications error: {str(e)}")
-        frappe.throw(str(e))
+        return {
+            "success": False,
+            "message": f"Failed to load leave applications: {str(e)}",
+            "leave_applications": []
+        }
 
 @frappe.whitelist()
 def get_leave_balance():
@@ -584,14 +913,94 @@ def get_leave_balance():
                 "from_date": ["<=", today()],
                 "to_date": [">=", today()]
             },
-            fields=["leave_type", "new_leaves_allocated", "leaves_taken", "total_leaves_allocated"]
+            fields=["leave_type", "new_leaves_allocated", "total_leaves_allocated"]
+        )
+        
+        # Calculate leaves taken for each leave type
+        leave_balance = []
+        for allocation in leave_allocations:
+            # Get approved leave applications for this leave type
+            leaves_taken = frappe.db.sql("""
+                SELECT COALESCE(SUM(total_leave_days), 0) as leaves_taken
+                FROM `tabLeave Application`
+                WHERE employee = %s 
+                AND leave_type = %s 
+                AND status = 'Approved'
+                AND docstatus = 1
+                AND from_date >= %s
+                AND to_date <= %s
+            """, (employee, allocation.leave_type, 
+                  frappe.db.get_value("Leave Allocation", {"employee": employee, "leave_type": allocation.leave_type, "docstatus": 1}, "from_date"),
+                  frappe.db.get_value("Leave Allocation", {"employee": employee, "leave_type": allocation.leave_type, "docstatus": 1}, "to_date")
+                  ))[0][0] or 0
+            
+            leave_balance.append({
+                "leave_type": allocation.leave_type,
+                "total_leaves_allocated": allocation.total_leaves_allocated,
+                "leaves_taken": leaves_taken,
+                "leaves_remaining": allocation.total_leaves_allocated - leaves_taken
+            })
+        
+        return {
+            "success": True,
+            "leave_balance": leave_balance
+        }
+        
+    except Exception as e:
+        print(f"Get leave balance error: {str(e)}")
+        return {
+            "success": False,
+            "message": f"Failed to load leave balance: {str(e)}",
+            "leave_balance": []
+        }
+
+@frappe.whitelist()
+def get_leave_types():
+    """
+    Get available leave types from the system
+    """
+    try:
+        user = frappe.session.user
+        if user == "Guest":
+            return {
+                "success": False,
+                "message": "Please login to view leave types",
+                "leave_types": []
+            }
+        
+        # Check if user has Employee role
+        user_roles = frappe.get_roles(user)
+        if "Employee" not in user_roles:
+            return {
+                "success": False,
+                "message": "Access denied. Employee role required.",
+                "leave_types": []
+            }
+        
+        # Get employee record to check company
+        employee_data = frappe.db.get_value("Employee", {"user_id": user}, ["name", "company"], as_dict=True)
+        if not employee_data:
+            return {
+                "success": False,
+                "message": "Employee record not found for this user",
+                "leave_types": []
+            }
+        
+        # Get all leave types (no is_active field exists in Leave Type doctype)
+        leave_types = frappe.get_all("Leave Type",
+            fields=["name", "leave_type_name", "max_leaves_allowed", "is_carry_forward", "is_lwp", "include_holiday"],
+            order_by="leave_type_name asc"
         )
         
         return {
             "success": True,
-            "leave_balance": leave_allocations
+            "leave_types": leave_types
         }
         
     except Exception as e:
-        frappe.log_error(f"Get leave balance error: {str(e)}")
-        frappe.throw(str(e))
+        print(f"Get leave types error: {str(e)}")
+        return {
+            "success": False,
+            "message": f"Failed to load leave types: {str(e)}",
+            "leave_types": []
+        }
