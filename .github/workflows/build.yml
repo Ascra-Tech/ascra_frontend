@@ -1,0 +1,30 @@
+name: Build Frontend
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+        cache: 'yarn'
+        cache-dependency-path: frontend/yarn.lock
+    
+    - name: Install dependencies
+      run: cd frontend && yarn install
+    
+    - name: Build frontend
+      run: cd frontend && yarn build
+    
+    - name: Check build output
+      run: ls -la ascra_frontend/public/frontend/

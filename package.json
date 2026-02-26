@@ -1,0 +1,19 @@
+{
+  "name": "ascra_frontend",
+  "version": "1.0.0",
+  "description": "Frontend of Ascratech Website",
+  "main": "index.js",
+  "scripts": {
+    "build": "cd frontend && yarn install && yarn build",
+    "dev": "cd frontend && yarn dev",
+    "install-frontend": "cd frontend && yarn install",
+    "build-frontend": "cd frontend && yarn build"
+  },
+  "keywords": ["frappe", "frontend", "vue"],
+  "author": "Amit Kumar",
+  "license": "MIT",
+  "engines": {
+    "node": ">=16.0.0",
+    "yarn": ">=1.22.0"
+  }
+}

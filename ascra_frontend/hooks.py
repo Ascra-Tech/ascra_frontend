@@ -70,6 +70,10 @@ app_license = "mit"
 # automatically create page for each record of this doctype
 # website_generators = ["Web Page"]
 
+website_route_rules = [
+	{"from_route": "/frontend/<path:app_path>", "to_route": "frontend"},
+]
+
 # Jinja
 # ----------
 
@@ -82,8 +86,8 @@ app_license = "mit"
 # Installation
 # ------------
 
-# before_install = "ascra_frontend.install.before_install"
-# after_install = "ascra_frontend.install.after_install"
+before_install = "ascra_frontend.install.before_install"
+after_install = "ascra_frontend.install.after_install"
 
 # Uninstallation
 # ------------
