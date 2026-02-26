@@ -5,8 +5,8 @@
 	"type": "module",
 	"scripts": {
 		"dev": "vite",
-		"build": "vite build --base=/assets/ascra_frontend/frontend/ && yarn copy-html-entry",
-		"copy-html-entry": "cp ../ascra_frontend/public/frontend/index.html ../ascra_frontend/www/frontend.html",
+		"build": "vite build --base=/assets/ascra_frontend/ && yarn copy-html-entry",
+		"copy-html-entry": "cp ../ascra_frontend/public/index.html ../ascra_frontend/www/frontend.html",
 		"preview": "vite preview",
 		"lint": "biome check --write .",
 		"test": "vitest",
