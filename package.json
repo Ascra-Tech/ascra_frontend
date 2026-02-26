@@ -13,7 +13,7 @@
   "author": "Amit Kumar",
   "license": "MIT",
   "engines": {
-    "node": ">=16.0.0",
+    "node": ">=14.0.0",
     "yarn": ">=1.22.0"
   }
 }
