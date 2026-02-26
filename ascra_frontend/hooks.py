@@ -57,7 +57,13 @@ app_license = "mit"
 # ----------
 
 # application home page (will override Website Settings)
-# home_page = "login"
+home_page = "frontend"
+
+# website user home page (by Role)
+role_home_page = {
+	"Website User": "frontend",
+	"Guest": "frontend",
+}
 
 # website user home page (by Role)
 # role_home_page = {
@@ -74,7 +80,7 @@ app_license = "mit"
 # 	{"from_route": "/<path:app_path>", "to_route": "frontend"},
 # ]
 
-# More specific route rules to avoid overriding Frappe's standard routes
+# Frontend route rules - make frontend the home page
 website_route_rules = [
 	{"from_route": "/", "to_route": "frontend"},
 	{"from_route": "/home", "to_route": "frontend"},
