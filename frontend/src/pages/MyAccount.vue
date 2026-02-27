@@ -56,27 +56,29 @@
               </div>
 
               <!-- Quick Actions -->
-              <div class="border-t border-gray-200 pt-6 mt-6 space-y-2">
+              <div class="border-t border-gray-200 pt-6 mt-6 space-y-3">
                 <Button 
-                  theme="blue" 
                   variant="solid" 
-                  class="w-full justify-start"
+                  class="w-full"
                   @click="activeTab = 'profile'"
                 >
-                  <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
-                  </svg>
+                  <template #prefix>
+                    <svg class="size-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                    </svg>
+                  </template>
                   Edit Profile
                 </Button>
                 <Button 
-                  theme="purple" 
                   variant="outline" 
-                  class="w-full justify-start"
+                  class="w-full"
                   @click="activeTab = 'security'"
                 >
-                  <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
-                  </svg>
+                  <template #prefix>
+                    <svg class="size-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                    </svg>
+                  </template>
                   Change Password
                 </Button>
               </div>
@@ -165,7 +167,6 @@
                 <div class="flex justify-end space-x-4">
                   <Button 
                     type="button"
-                    theme="gray" 
                     variant="outline"
                     @click="resetProfileForm"
                   >
@@ -173,7 +174,6 @@
                   </Button>
                   <Button 
                     type="submit"
-                    theme="blue" 
                     variant="solid"
                     :loading="isUpdating"
                   >
@@ -228,7 +228,6 @@
                 <div class="flex justify-end space-x-4">
                   <Button 
                     type="button"
-                    theme="gray" 
                     variant="outline"
                     @click="resetPasswordForm"
                   >
@@ -236,7 +235,6 @@
                   </Button>
                   <Button 
                     type="submit"
-                    theme="purple" 
                     variant="solid"
                     :loading="isUpdatingPassword"
                   >

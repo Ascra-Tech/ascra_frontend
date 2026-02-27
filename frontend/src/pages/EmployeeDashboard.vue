@@ -235,36 +235,38 @@
             <div v-if="activeTab === 'attendance'">
               <!-- Date Filter Controls -->
               <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
-                <div class="flex items-center space-x-4">
+                <div class="flex flex-col sm:flex-row sm:items-center space-y-3 sm:space-y-0 sm:space-x-4">
                   <label class="text-sm font-medium text-blue-900">Filter by Date:</label>
-                  <div class="flex items-center space-x-2">
+                  <div class="flex flex-col sm:flex-row sm:items-center space-y-2 sm:space-y-0 sm:space-x-2">
                     <label class="text-xs text-blue-700">From:</label>
                     <input
                       type="date"
                       v-model="attendanceFromDate"
-                      class="px-2 py-1 text-sm border border-blue-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500"
+                      class="px-2 py-1 text-sm border border-blue-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500 w-full sm:w-auto"
                     />
                   </div>
-                  <div class="flex items-center space-x-2">
+                  <div class="flex flex-col sm:flex-row sm:items-center space-y-2 sm:space-y-0 sm:space-x-2">
                     <label class="text-xs text-blue-700">To:</label>
                     <input
                       type="date"
                       v-model="attendanceToDate"
-                      class="px-2 py-1 text-sm border border-blue-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500"
+                      class="px-2 py-1 text-sm border border-blue-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500 w-full sm:w-auto"
                     />
                   </div>
-                  <button
-                    @click="filterAttendanceRecords"
-                    class="px-3 py-1 text-sm bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
-                  >
-                    Apply Filter
-                  </button>
-                  <button
-                    @click="clearAttendanceFilter"
-                    class="px-3 py-1 text-sm bg-gray-500 text-white rounded hover:bg-gray-600 transition-colors"
-                  >
-                    Clear
-                  </button>
+                  <div class="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2">
+                    <button
+                      @click="filterAttendanceRecords"
+                      class="px-3 py-1 text-sm bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
+                    >
+                      Apply Filter
+                    </button>
+                    <button
+                      @click="clearAttendanceFilter"
+                      class="px-3 py-1 text-sm bg-gray-500 text-white rounded hover:bg-gray-600 transition-colors"
+                    >
+                      Clear
+                    </button>
+                  </div>
                 </div>
               </div>
               
@@ -296,36 +298,38 @@
             <div v-if="activeTab === 'leaves'">
               <!-- Date Filter Controls -->
               <div class="bg-green-50 border border-green-200 rounded-lg p-4 mb-4">
-                <div class="flex items-center space-x-4">
+                <div class="flex flex-col sm:flex-row sm:items-center space-y-3 sm:space-y-0 sm:space-x-4">
                   <label class="text-sm font-medium text-green-900">Filter by Date:</label>
-                  <div class="flex items-center space-x-2">
+                  <div class="flex flex-col sm:flex-row sm:items-center space-y-2 sm:space-y-0 sm:space-x-2">
                     <label class="text-xs text-green-700">From:</label>
                     <input
                       type="date"
                       v-model="leaveFromDate"
-                      class="px-2 py-1 text-sm border border-green-300 rounded focus:outline-none focus:ring-1 focus:ring-green-500"
+                      class="px-2 py-1 text-sm border border-green-300 rounded focus:outline-none focus:ring-1 focus:ring-green-500 w-full sm:w-auto"
                     />
                   </div>
-                  <div class="flex items-center space-x-2">
+                  <div class="flex flex-col sm:flex-row sm:items-center space-y-2 sm:space-y-0 sm:space-x-2">
                     <label class="text-xs text-green-700">To:</label>
                     <input
                       type="date"
                       v-model="leaveToDate"
-                      class="px-2 py-1 text-sm border border-green-300 rounded focus:outline-none focus:ring-1 focus:ring-green-500"
+                      class="px-2 py-1 text-sm border border-green-300 rounded focus:outline-none focus:ring-1 focus:ring-green-500 w-full sm:w-auto"
                     />
                   </div>
-                  <button
-                    @click="filterLeaveApplications"
-                    class="px-3 py-1 text-sm bg-green-600 text-white rounded hover:bg-green-700 transition-colors"
-                  >
-                    Apply Filter
-                  </button>
-                  <button
-                    @click="clearLeaveFilter"
-                    class="px-3 py-1 text-sm bg-gray-500 text-white rounded hover:bg-gray-600 transition-colors"
-                  >
-                    Clear
-                  </button>
+                  <div class="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2">
+                    <button
+                      @click="filterLeaveApplications"
+                      class="px-3 py-1 text-sm bg-green-600 text-white rounded hover:bg-green-700 transition-colors"
+                    >
+                      Apply Filter
+                    </button>
+                    <button
+                      @click="clearLeaveFilter"
+                      class="px-3 py-1 text-sm bg-gray-500 text-white rounded hover:bg-gray-600 transition-colors"
+                    >
+                      Clear
+                    </button>
+                  </div>
                 </div>
               </div>
               
@@ -350,36 +354,38 @@
             <div v-if="activeTab === 'salary'" class="space-y-4">
               <!-- Date Filter Controls -->
               <div class="bg-purple-50 border border-purple-200 rounded-lg p-4">
-                <div class="flex items-center space-x-4 mb-3">
+                <div class="flex flex-col sm:flex-row sm:items-center space-y-3 sm:space-y-0 sm:space-x-4 mb-3">
                   <label class="text-sm font-medium text-purple-900">Filter by Date:</label>
-                  <div class="flex items-center space-x-2">
+                  <div class="flex flex-col sm:flex-row sm:items-center space-y-2 sm:space-y-0 sm:space-x-2">
                     <label class="text-xs text-purple-700">From:</label>
                     <input
                       type="date"
                       v-model="salaryFromDate"
-                      class="px-2 py-1 text-sm border border-purple-300 rounded focus:outline-none focus:ring-1 focus:ring-purple-500"
+                      class="px-2 py-1 text-sm border border-purple-300 rounded focus:outline-none focus:ring-1 focus:ring-purple-500 w-full sm:w-auto"
                     />
                   </div>
-                  <div class="flex items-center space-x-2">
+                  <div class="flex flex-col sm:flex-row sm:items-center space-y-2 sm:space-y-0 sm:space-x-2">
                     <label class="text-xs text-purple-700">To:</label>
                     <input
                       type="date"
                       v-model="salaryToDate"
-                      class="px-2 py-1 text-sm border border-purple-300 rounded focus:outline-none focus:ring-1 focus:ring-purple-500"
+                      class="px-2 py-1 text-sm border border-purple-300 rounded focus:outline-none focus:ring-1 focus:ring-purple-500 w-full sm:w-auto"
                     />
                   </div>
-                  <button
-                    @click="filterSalarySlips"
-                    class="px-3 py-1 text-sm bg-purple-600 text-white rounded hover:bg-purple-700 transition-colors"
-                  >
-                    Apply Filter
-                  </button>
-                  <button
-                    @click="clearSalaryFilter"
-                    class="px-3 py-1 text-sm bg-gray-500 text-white rounded hover:bg-gray-600 transition-colors"
-                  >
-                    Clear
-                  </button>
+                  <div class="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2">
+                    <button
+                      @click="filterSalarySlips"
+                      class="px-3 py-1 text-sm bg-purple-600 text-white rounded hover:bg-purple-700 transition-colors"
+                    >
+                      Apply Filter
+                    </button>
+                    <button
+                      @click="clearSalaryFilter"
+                      class="px-3 py-1 text-sm bg-gray-500 text-white rounded hover:bg-gray-600 transition-colors"
+                    >
+                      Clear
+                    </button>
+                  </div>
                 </div>
               </div>
               
