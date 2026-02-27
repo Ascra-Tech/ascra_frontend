@@ -1,10 +1,10 @@
 <template>
-  <nav class="bg-white shadow-lg fixed w-full top-0 z-50">
+  <nav class="bg-white shadow-md fixed w-full top-0 z-50 border-b border-gray-200">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex justify-between h-16">
         <!-- Logo -->
         <div class="flex items-center">
-          <div class="flex-shrink-0 flex items-center">
+          <router-link to="/" class="flex-shrink-0 flex items-center">
             <div v-if="companyInfo?.logo && !logoError" class="h-10 w-auto max-w-[120px] flex items-center">
               <img 
                 :src="companyInfo.logo" 
@@ -16,133 +16,225 @@
             <div v-else class="h-10 w-10 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
               <span class="text-white font-bold text-lg">{{ getCompanyInitials() }}</span>
             </div>
-          </div>
+          </router-link>
         </div>
 
         <!-- Desktop Navigation -->
-        <div class="hidden md:flex items-center space-x-8">
-          <router-link v-if="session.isLoggedIn" to="/dashboard" class="text-gray-700 hover:text-blue-600 px-3 py-2 text-sm font-medium transition-colors">
-            Dashboard
-          </router-link>
-          <router-link v-else to="/" class="text-gray-700 hover:text-blue-600 px-3 py-2 text-sm font-medium transition-colors">
+        <div class="hidden md:flex items-center space-x-1">
+          <router-link 
+            to="/" 
+            class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 transition-colors"
+          >
             Home
           </router-link>
           
-          <a @click="navigateToSection('services')" class="text-gray-700 hover:text-blue-600 px-3 py-2 text-sm font-medium transition-colors cursor-pointer">
+          <a 
+            @click="navigateToSection('services')" 
+            class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 transition-colors cursor-pointer"
+          >
             Services
           </a>
-          <router-link to="/erpnext" class="text-gray-700 hover:text-blue-600 px-3 py-2 text-sm font-medium transition-colors">
+          
+          <router-link 
+            to="/erpnext" 
+            class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 transition-colors"
+          >
             ERPNext
           </router-link>
-          <a @click="navigateToSection('portfolio')" class="text-gray-700 hover:text-blue-600 px-3 py-2 text-sm font-medium transition-colors cursor-pointer">
+          
+          <a 
+            @click="navigateToSection('portfolio')" 
+            class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 transition-colors cursor-pointer"
+          >
             Portfolio
           </a>
-          <a @click="navigateToSection('about')" class="text-gray-700 hover:text-blue-600 px-3 py-2 text-sm font-medium transition-colors cursor-pointer">
+          
+          <a 
+            @click="navigateToSection('about')" 
+            class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 transition-colors cursor-pointer"
+          >
             About
           </a>
-          <a @click="navigateToSection('contact')" class="text-gray-700 hover:text-blue-600 px-3 py-2 text-sm font-medium transition-colors cursor-pointer">
+          
+          <a 
+            @click="navigateToSection('contact')" 
+            class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 transition-colors cursor-pointer"
+          >
             Contact
           </a>
-          
-          <!-- Authentication Section -->
-          <div v-if="session.isLoggedIn" class="flex items-center space-x-4 ml-4">
-            <router-link v-if="userRoles.is_employee" to="/employee-dashboard" class="text-gray-700 hover:text-blue-600 px-3 py-2 text-sm font-medium transition-colors bg-blue-50 rounded-lg">
-              Employee Dashboard
-            </router-link>
-            <div class="flex items-center space-x-2">
-              <div class="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center text-white text-sm font-semibold">
-                {{ getUserInitials(session.user) }}
-              </div>
-              <span class="text-sm text-gray-700">{{ session.user }}</span>
+        </div>
+
+        <!-- Right Side Actions -->
+        <div class="flex items-center space-x-3">
+          <!-- Search Bar (for logged in users) -->
+          <div v-if="session.isLoggedIn" class="hidden lg:block">
+            <div class="relative">
+              <input
+                type="text"
+                placeholder="Search or type a command (Ctrl + G)"
+                class="w-64 px-4 py-2 pl-10 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                @focus="showSearchModal = true"
+              />
+              <svg class="absolute left-3 top-2.5 w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+              </svg>
             </div>
-            <Button theme="gray" variant="outline" @click="handleLogout" :loading="session.logout.loading">
-              Logout
-            </Button>
           </div>
-          
-          <div v-else class="flex items-center space-x-4 ml-4">
+
+          <!-- Notifications (for logged in users) -->
+          <button 
+            v-if="session.isLoggedIn"
+            class="p-2 text-gray-600 hover:text-blue-600 hover:bg-gray-50 rounded-lg transition-colors relative"
+            @click="showNotifications = !showNotifications"
+          >
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
+            </svg>
+            <span class="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
+          </button>
+
+          <!-- Help Dropdown -->
+          <Dropdown :options="helpMenuOptions" v-if="session.isLoggedIn">
+            <template #default="{ open }">
+              <button class="px-3 py-2 text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-lg transition-colors flex items-center space-x-1">
+                <span>Help</span>
+                <svg class="w-4 h-4" :class="{ 'rotate-180': open }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                </svg>
+              </button>
+            </template>
+          </Dropdown>
+
+          <!-- User Menu Dropdown (for logged in users) -->
+          <Dropdown :options="userMenuOptions" v-if="session.isLoggedIn">
+            <template #default="{ open }">
+              <button class="flex items-center space-x-2 px-2 py-1 rounded-lg hover:bg-gray-50 transition-colors">
+                <Avatar 
+                  :label="getUserInitials(session.user)" 
+                  :image="userProfile?.user_image"
+                  size="sm"
+                  class="w-8 h-8"
+                />
+                <svg class="w-4 h-4 text-gray-600" :class="{ 'rotate-180': open }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                </svg>
+              </button>
+            </template>
+          </Dropdown>
+
+          <!-- Login/Signup Buttons (for guests) -->
+          <div v-else class="flex items-center space-x-2">
             <router-link to="/account/login">
-              <Button theme="gray" variant="outline">
+              <Button theme="gray" variant="outline" size="sm">
                 Login
               </Button>
             </router-link>
             <router-link to="/account/signup">
-              <Button theme="blue" variant="solid">
+              <Button theme="blue" variant="solid" size="sm">
                 Sign Up
               </Button>
             </router-link>
           </div>
-        </div>
 
-        <!-- Mobile menu button -->
-        <div class="md:hidden flex items-center">
-          <button @click="mobileMenuOpen = !mobileMenuOpen" class="text-gray-700 hover:text-blue-600 focus:outline-none focus:text-blue-600">
-            <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path v-if="!mobileMenuOpen" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-              <path v-else stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          <!-- Mobile Menu Button -->
+          <button 
+            @click="mobileMenuOpen = !mobileMenuOpen" 
+            class="md:hidden p-2 rounded-md text-gray-700 hover:text-blue-600 hover:bg-gray-50"
+          >
+            <svg v-if="!mobileMenuOpen" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+            </svg>
+            <svg v-else class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
             </svg>
           </button>
         </div>
       </div>
     </div>
 
-    <!-- Mobile Navigation -->
-    <div v-show="mobileMenuOpen" class="md:hidden bg-white border-t border-gray-200">
-      <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-        <router-link v-if="session.isLoggedIn" to="/dashboard" @click="mobileMenuOpen = false" class="block text-gray-700 hover:text-blue-600 px-3 py-2 text-base font-medium">
-          Dashboard
-        </router-link>
-        <router-link v-else to="/" @click="mobileMenuOpen = false" class="block text-gray-700 hover:text-blue-600 px-3 py-2 text-base font-medium">
+    <!-- Mobile Menu -->
+    <div v-if="mobileMenuOpen" class="md:hidden border-t border-gray-200 bg-white">
+      <div class="px-2 pt-2 pb-3 space-y-1">
+        <router-link 
+          to="/" 
+          class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50"
+          @click="mobileMenuOpen = false"
+        >
           Home
         </router-link>
-        
-        <a @click="navigateToSectionMobile('services')" class="block text-gray-700 hover:text-blue-600 px-3 py-2 text-base font-medium cursor-pointer">
+        <a 
+          @click="navigateToSection('services'); mobileMenuOpen = false" 
+          class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 cursor-pointer"
+        >
           Services
         </a>
-        <router-link to="/erpnext" @click="mobileMenuOpen = false" class="block text-gray-700 hover:text-blue-600 px-3 py-2 text-base font-medium">
+        <router-link 
+          to="/erpnext" 
+          class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50"
+          @click="mobileMenuOpen = false"
+        >
           ERPNext
         </router-link>
-        <a @click="navigateToSectionMobile('portfolio')" class="block text-gray-700 hover:text-blue-600 px-3 py-2 text-base font-medium cursor-pointer">
+        <a 
+          @click="navigateToSection('portfolio'); mobileMenuOpen = false" 
+          class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 cursor-pointer"
+        >
           Portfolio
         </a>
-        <a @click="navigateToSectionMobile('about')" class="block text-gray-700 hover:text-blue-600 px-3 py-2 text-base font-medium cursor-pointer">
+        <a 
+          @click="navigateToSection('about'); mobileMenuOpen = false" 
+          class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 cursor-pointer"
+        >
           About
         </a>
-        <a @click="navigateToSectionMobile('contact')" class="block text-gray-700 hover:text-blue-600 px-3 py-2 text-base font-medium cursor-pointer">
+        <a 
+          @click="navigateToSection('contact'); mobileMenuOpen = false" 
+          class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 cursor-pointer"
+        >
           Contact
         </a>
-        
-        <!-- Mobile Authentication Section -->
-        <div v-if="session.isLoggedIn" class="border-t border-gray-200 pt-3">
-          <router-link v-if="userRoles.is_employee" to="/employee-dashboard" @click="mobileMenuOpen = false" class="block text-gray-700 hover:text-blue-600 px-3 py-2 text-base font-medium bg-blue-50 rounded-lg mx-3 mb-3">
+
+        <!-- Mobile User Menu -->
+        <div v-if="session.isLoggedIn" class="border-t border-gray-200 pt-4 mt-4">
+          <div class="flex items-center px-3 py-2 mb-2">
+            <Avatar 
+              :label="getUserInitials(session.user)" 
+              :image="userProfile?.user_image"
+              size="md"
+              class="w-10 h-10"
+            />
+            <div class="ml-3">
+              <div class="text-sm font-medium text-gray-900">{{ userProfile?.full_name || session.user }}</div>
+              <div class="text-xs text-gray-500">{{ session.user }}</div>
+            </div>
+          </div>
+          <router-link 
+            to="/my-account" 
+            class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50"
+            @click="mobileMenuOpen = false"
+          >
+            My Account
+          </router-link>
+          <a 
+            href="/app" 
+            class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50"
+          >
+            Open Desk
+          </a>
+          <router-link 
+            v-if="userRoles.is_employee" 
+            to="/employee-dashboard" 
+            class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50"
+            @click="mobileMenuOpen = false"
+          >
             Employee Dashboard
           </router-link>
-          <div class="flex items-center px-3 py-2">
-            <div class="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center text-white text-sm font-semibold mr-3">
-              {{ getUserInitials(session.user) }}
-            </div>
-            <span class="text-sm text-gray-700">{{ session.user }}</span>
-          </div>
-          <div class="px-3 py-2">
-            <Button theme="gray" variant="outline" class="w-full" @click="handleLogout" :loading="session.logout.loading">
-              Logout
-            </Button>
-          </div>
-        </div>
-        
-        <div v-else class="border-t border-gray-200 pt-3">
-          <div class="px-3 py-2 space-y-2">
-            <router-link to="/account/login" @click="mobileMenuOpen = false">
-              <Button theme="gray" variant="outline" class="w-full">
-                Login
-              </Button>
-            </router-link>
-            <router-link to="/account/signup" @click="mobileMenuOpen = false">
-              <Button theme="blue" variant="solid" class="w-full">
-                Sign Up
-              </Button>
-            </router-link>
-          </div>
+          <button 
+            @click="handleLogout" 
+            class="w-full text-left block px-3 py-2 rounded-md text-base font-medium text-red-600 hover:bg-red-50"
+          >
+            Log out
+          </button>
         </div>
       </div>
     </div>
@@ -150,115 +242,186 @@
 </template>
 
 <script setup>
-import { ref, onMounted, watch } from 'vue'
-import { call } from 'frappe-ui'
+import { ref, onMounted, computed } from 'vue'
+import { useRouter } from 'vue-router'
+import { call, Button, Dropdown, Avatar } from 'frappe-ui'
 import { session } from '../data/session'
 
+const router = useRouter()
+
+// State
 const mobileMenuOpen = ref(false)
-const userRoles = ref({ roles: [], is_employee: false })
+const showSearchModal = ref(false)
+const showNotifications = ref(false)
 const companyInfo = ref(null)
 const logoError = ref(false)
+const userProfile = ref(null)
+const userRoles = ref({
+  is_employee: false
+})
 
-import { useRouter, useRoute } from 'vue-router'
-const router = useRouter()
-const route = useRoute()
-
-const navigateToSection = (sectionId) => {
-  // If we're on dashboard, go to home with hash
-  if (route.name === 'Dashboard') {
-    router.push(`/#${sectionId}`)
-  } else {
-    // If we're on home, scroll to section
-    const element = document.getElementById(sectionId)
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' })
-    } else {
-      // If element not found, navigate to home with hash
-      router.push(`/#${sectionId}`)
-    }
+// User menu options
+const userMenuOptions = computed(() => [
+  {
+    label: 'My Profile',
+    icon: 'user',
+    onClick: () => router.push('/my-account')
+  },
+  {
+    label: 'My Settings',
+    icon: 'settings',
+    onClick: () => router.push('/my-account')
+  },
+  {
+    label: 'Session Defaults',
+    icon: 'sliders',
+    onClick: () => window.location.href = '/app/user'
+  },
+  { label: '', component: 'divider' },
+  {
+    label: 'Employee Dashboard',
+    icon: 'briefcase',
+    onClick: () => router.push('/employee-dashboard'),
+    condition: () => userRoles.value.is_employee
+  }, 
+  {
+    label: 'Open Desk',
+    icon: 'layout',
+    onClick: () => window.location.href = '/app'
+  },
+  {
+    label: 'View Website',
+    icon: 'globe',
+    onClick: () => router.push('/')
+  },
+  { label: '', component: 'divider' },
+  {
+    label: 'Log out',
+    icon: 'log-out',
+    onClick: handleLogout
   }
-}
+])
 
-const navigateToSectionMobile = (sectionId) => {
-  mobileMenuOpen.value = false
-  setTimeout(() => navigateToSection(sectionId), 100)
-}
-
-const scrollTo = (elementId) => {
-  const element = document.getElementById(elementId)
-  if (element) {
-    element.scrollIntoView({ behavior: 'smooth' })
+// Help menu options
+const helpMenuOptions = computed(() => [
+  {
+    label: 'Documentation',
+    icon: 'book',
+    onClick: () => window.open('https://docs.erpnext.com', '_blank')
+  },
+  {
+    label: 'Community Forum',
+    icon: 'message-circle',
+    onClick: () => window.open('https://discuss.frappe.io', '_blank')
+  },
+  {
+    label: 'Report an Issue',
+    icon: 'alert-circle',
+    onClick: () => window.open('https://github.com/frappe/erpnext/issues', '_blank')
+  },
+  { label: '', component: 'divider' },
+  {
+    label: 'Keyboard Shortcuts',
+    icon: 'command',
+    onClick: () => alert('Ctrl+G: Search\nCtrl+K: Quick Actions')
   }
-}
+])
 
-const getUserInitials = (email) => {
-  if (!email) return 'U'
-  const name = email.split('@')[0]
-  return name.charAt(0).toUpperCase()
-}
-
-const getCompanyInitials = () => {
-  if (companyInfo.value?.company_name) {
-    return companyInfo.value.company_name.charAt(0).toUpperCase()
-  }
-  if (companyInfo.value?.abbr) {
-    return companyInfo.value.abbr.charAt(0).toUpperCase()
-  }
-  return 'A'
-}
-
-const handleLogoError = () => {
-  logoError.value = true
-}
-
+// Load company info
 const loadCompanyInfo = async () => {
   try {
     const response = await call('ascra_frontend.api.get_company_info')
-    if (response.success) {
+    if (response && response.success) {
       companyInfo.value = response.company
-      logoError.value = false
-    } else {
-      console.error('Failed to load company info:', response.message)
     }
   } catch (err) {
     console.error('Error loading company info:', err)
   }
 }
 
-const loadUserRoles = async () => {
-  if (session.isLoggedIn) {
-    try {
-      const response = await call('ascra_frontend.api.get_user_roles')
-      if (response.success) {
-        userRoles.value = response
-      }
-    } catch (err) {
-      console.error('Error loading user roles:', err)
-      userRoles.value = { roles: [], is_employee: false }
+// Load user profile
+const loadUserProfile = async () => {
+  if (!session.isLoggedIn) return
+  
+  try {
+    const response = await call('ascra_frontend.api.get_user_profile')
+    if (response && response.success) {
+      userProfile.value = response.user
     }
-  } else {
-    userRoles.value = { roles: [], is_employee: false }
+  } catch (err) {
+    console.error('Error loading user profile:', err)
   }
 }
 
+// Check user roles
+const checkUserRoles = async () => {
+  if (!session.isLoggedIn) return
+  
+  try {
+    const response = await call('ascra_frontend.api.check_user_roles')
+    if (response && response.success) {
+      userRoles.value = response.roles
+    }
+  } catch (err) {
+    console.error('Error checking user roles:', err)
+  }
+}
+
+// Handle logo error
+const handleLogoError = () => {
+  logoError.value = true
+}
+
+// Get company initials
+const getCompanyInitials = () => {
+  if (companyInfo.value?.company_name) {
+    return companyInfo.value.company_name
+      .split(' ')
+      .map(word => word.charAt(0))
+      .join('')
+      .toUpperCase()
+      .slice(0, 2)
+  }
+  return 'AC'
+}
+
+// Get user initials
+const getUserInitials = (email) => {
+  if (!email) return 'U'
+  const name = email.split('@')[0]
+  return name.charAt(0).toUpperCase()
+}
+
+// Navigate to section
+const navigateToSection = (sectionId) => {
+  if (router.currentRoute.value.path !== '/') {
+    router.push('/').then(() => {
+      setTimeout(() => {
+        const element = document.getElementById(sectionId)
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth' })
+        }
+      }, 100)
+    })
+  } else {
+    const element = document.getElementById(sectionId)
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' })
+    }
+  }
+}
+
+// Handle logout
 const handleLogout = () => {
   session.logout.submit()
 }
 
-// Watch for session changes to reload roles
-watch(() => session.isLoggedIn, (newValue) => {
-  if (newValue) {
-    loadUserRoles()
-  } else {
-    userRoles.value = { roles: [], is_employee: false }
-  }
-})
-
-// Load roles and company info on mount
+// Initialize
 onMounted(() => {
   loadCompanyInfo()
   if (session.isLoggedIn) {
-    loadUserRoles()
+    loadUserProfile()
+    checkUserRoles()
   }
 })
 </script>

@@ -22,9 +22,9 @@ const routes = [
 		meta: { requiresAuth: false }
 	},
 	{
-		name: "Dashboard",
-		path: "/dashboard",
-		component: () => import("@/pages/Dashboard.vue"),
+		name: "MyAccount",
+		path: "/my-account",
+		component: () => import("@/pages/MyAccount.vue"),
 		meta: { requiresAuth: true }
 	},
 	{
@@ -58,8 +58,8 @@ router.beforeEach(async (to, from, next) => {
 	const requiresAuth = to.meta.requiresAuth
 
 	if (to.name === "Login" && isLoggedIn) {
-		// Redirect logged-in users away from login page to dashboard
-		next({ name: "Dashboard" })
+		// Redirect logged-in users away from login page to my account
+		next({ name: "MyAccount" })
 	} else if (requiresAuth && !isLoggedIn) {
 		// Redirect unauthenticated users to login for protected routes
 		next({ name: "Login" })

@@ -38,159 +38,138 @@
           
           <form @submit.prevent="submitForm" class="space-y-6">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">First Name</label>
-                <Input
-                  v-model="form.firstName"
-                  placeholder="John"
-                  required
-                  class="w-full"
-                />
-              </div>
-              <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">Last Name</label>
-                <Input
-                  v-model="form.lastName"
-                  placeholder="Doe"
-                  required
-                  class="w-full"
-                />
-              </div>
+              <FormControl
+                type="text"
+                v-model="form.firstName"
+                label="First Name"
+                placeholder="John"
+                required
+              />
+              <FormControl
+                type="text"
+                v-model="form.lastName"
+                label="Last Name"
+                placeholder="Doe"
+                required
+              />
             </div>
             
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
-              <Input
+              <FormControl
+                type="text"
                 v-model="form.email"
-                type="email"
+                label="Email"
                 placeholder="john@example.com"
                 required
-                class="w-full"
               />
+              <ErrorMessage v-if="validationErrors.email" :message="validationErrors.email" />
             </div>
             
             <div>
               <label class="block text-sm font-medium text-gray-700 mb-2">Phone *</label>
-              <input
-                v-model="form.phone"
-                type="tel"
-                placeholder="+1 (555) 123-4567"
-                required
-                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              />
-            </div>
-            
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">Company *</label>
-              <Input
-                v-model="form.company"
-                placeholder="Your Company"
-                required
-                class="w-full"
-              />
-            </div>
-            
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">Job Title</label>
-                <Input
-                  v-model="form.jobTitle"
-                  placeholder="CEO, CTO, Manager, etc."
-                  class="w-full"
+              <div class="flex gap-2">
+                <FormControl
+                  type="select"
+                  v-model="selectedCountryCode"
+                  :options="countryCodes"
+                  placeholder="Code"
+                  class="w-40"
+                >
+                  <template #prefix>
+                    <img v-if="selectedCountryFlag" :src="selectedCountryFlag" alt="flag" class="w-6 h-4" />
+                  </template>
+                </FormControl>
+                <FormControl
+                  type="text"
+                  v-model="form.phone"
+                  placeholder="Enter phone number"
+                  required
+                  class="flex-1"
                 />
               </div>
+              <ErrorMessage v-if="validationErrors.phone" :message="validationErrors.phone" />
+            </div>
+            
+            <FormControl
+              type="text"
+              v-model="form.company"
+              label="Company"
+              placeholder="Your Company"
+              required
+            />
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <FormControl
+                type="text"
+                v-model="form.jobTitle"
+                label="Job Title"
+                placeholder="CEO, CTO, Manager, etc."
+              />
               <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">Website</label>
-                <Input
+                <FormControl
+                  type="text"
                   v-model="form.website"
-                  type="url"
+                  label="Website"
                   placeholder="https://yourcompany.com"
-                  class="w-full"
                 />
+                <ErrorMessage v-if="validationErrors.website" :message="validationErrors.website" />
               </div>
             </div>
             
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">City</label>
-                <Input
-                  v-model="form.city"
-                  placeholder="New York"
-                  class="w-full"
-                />
-              </div>
-              <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">State</label>
-                <Input
-                  v-model="form.state"
-                  placeholder="NY"
-                  class="w-full"
-                />
-              </div>
-              <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">Country</label>
-                <Input
-                  v-model="form.country"
-                  placeholder="United States"
-                  class="w-full"
-                />
-              </div>
+              <FormControl
+                type="text"
+                v-model="form.city"
+                label="City"
+                placeholder="New York"
+              />
+              <FormControl
+                type="text"
+                v-model="form.state"
+                label="State/Province"
+                placeholder="Enter state or province"
+              />
+              <FormControl
+                type="select"
+                v-model="form.country"
+                label="Country"
+                :options="countryOptions"
+                placeholder="Select Country"
+              />
             </div>
             
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">Industry</label>
-                <select v-model="form.industry" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                  <option value="">Select Industry</option>
-                  <option value="Technology">Technology</option>
-                  <option value="Healthcare">Healthcare</option>
-                  <option value="Finance">Finance</option>
-                  <option value="Education">Education</option>
-                  <option value="Retail">Retail</option>
-                  <option value="Manufacturing">Manufacturing</option>
-                  <option value="Real Estate">Real Estate</option>
-                  <option value="Other">Other</option>
-                </select>
-              </div>
-              <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">Company Size</label>
-                <select v-model="form.noOfEmployees" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                  <option value="">Select Size</option>
-                  <option value="1-10">1-10 employees</option>
-                  <option value="11-50">11-50 employees</option>
-                  <option value="51-200">51-200 employees</option>
-                  <option value="201-500">201-500 employees</option>
-                  <option value="501-1000">501-1000 employees</option>
-                  <option value="1000+">1000+ employees</option>
-                </select>
-              </div>
+              <FormControl
+                type="select"
+                v-model="form.industry"
+                label="Industry"
+                :options="industryOptions"
+                placeholder="Select Industry"
+              />
+              <FormControl
+                type="select"
+                v-model="form.noOfEmployees"
+                label="Company Size"
+                :options="companySizeOptions"
+                placeholder="Select Size"
+              />
             </div>
             
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">Project Type</label>
-              <select v-model="form.projectType" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                <option value="">Select a service</option>
-                <option value="Product Enquiry">Product Enquiry</option>
-                <option value="Web Development">Web Development</option>
-                <option value="Mobile Development">Mobile Development</option>
-                <option value="Cloud Solutions">Cloud Solutions</option>
-                <option value="UI/UX Design">UI/UX Design</option>
-                <option value="API Development">API Development</option>
-                <option value="Tech Consulting">Tech Consulting</option>
-                <option value="Other">Other</option>
-              </select>
-            </div>
+            <FormControl
+              type="select"
+              v-model="form.projectType"
+              label="Project Type"
+              :options="projectTypeOptions"
+              placeholder="Select Project Type"
+            />
             
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">Message</label>
-              <textarea
-                v-model="form.message"
-                rows="4"
-                placeholder="Tell us about your project..."
-                required
-                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
-              ></textarea>
-            </div>
+            <Textarea
+              v-model="form.message"
+              label="What can we help you with?"
+              placeholder="Tell us about your project..."
+              rows="4"
+              required
+            />
             
             <Button 
               type="submit" 
@@ -307,8 +286,8 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
-import { call, Input, Button } from 'frappe-ui'
+import { ref, onMounted, computed } from 'vue'
+import { call, Input, Button, FormControl, Textarea, ErrorMessage } from 'frappe-ui'
 
 const form = ref({
   firstName: '',
@@ -331,10 +310,142 @@ const form = ref({
 const isSubmitting = ref(false)
 const submitSuccess = ref(false)
 const submitError = ref('')
+const validationErrors = ref({})
+const countries = ref([])
+const countryCodes = ref([])
+const selectedCountryCode = ref('+91') // Default to India
+
+// Frappe UI Select options
+const countryOptions = computed(() => 
+  countries.value.map(c => ({ label: c, value: c }))
+)
+
+const industryOptions = [
+  { label: 'Technology', value: 'Technology' },
+  { label: 'Healthcare', value: 'Healthcare' },
+  { label: 'Finance', value: 'Finance' },
+  { label: 'Education', value: 'Education' },
+  { label: 'Retail', value: 'Retail' },
+  { label: 'Manufacturing', value: 'Manufacturing' },
+  { label: 'Real Estate', value: 'Real Estate' },
+  { label: 'Other', value: 'Other' },
+]
+
+const companySizeOptions = [
+  { label: '1-10 employees', value: '1-10' },
+  { label: '11-50 employees', value: '11-50' },
+  { label: '51-200 employees', value: '51-200' },
+  { label: '201-500 employees', value: '201-500' },
+  { label: '500+ employees', value: '500+' },
+]
+
+const projectTypeOptions = [
+  { label: 'Web Development', value: 'Web Development' },
+  { label: 'Mobile Development', value: 'Mobile Development' },
+  { label: 'Cloud Solutions', value: 'Cloud Solutions' },
+  { label: 'AI/ML Solutions', value: 'AI/ML Solutions' },
+  { label: 'Consulting', value: 'Consulting' },
+  { label: 'Product Enquiry', value: 'Product Enquiry' },
+  { label: 'Other', value: 'Other' },
+]
+
+// Load countries on mount
+const loadCountries = async () => {
+  try {
+    const response = await call('ascra_frontend.api.get_countries')
+    if (response && response.success) {
+      countries.value = response.countries
+    }
+  } catch (err) {
+    console.error('Error loading countries:', err)
+  }
+}
+
+// Load country codes for phone field
+const loadCountryCodes = async () => {
+  try {
+    const response = await call('ascra_frontend.api.get_country_codes')
+    if (response && response.success) {
+      countryCodes.value = response.country_codes
+      // Set default to India if available
+      const india = countryCodes.value.find(c => c.country === 'India')
+      if (india) {
+        selectedCountryCode.value = india.value
+      }
+    }
+  } catch (err) {
+    console.error('Error loading country codes:', err)
+    // Fallback country codes
+    countryCodes.value = [
+      {label: 'India (+91)', value: '+91', country: 'India', code: 'in', isd: '+91'},
+      {label: 'United States (+1)', value: '+1', country: 'United States', code: 'us', isd: '+1'},
+      {label: 'United Kingdom (+44)', value: '+44', country: 'United Kingdom', code: 'gb', isd: '+44'},
+    ]
+  }
+}
+
+// Get selected country flag
+const selectedCountryFlag = computed(() => {
+  const country = countryCodes.value.find(c => c.value === selectedCountryCode.value)
+  return country?.code ? `https://flagcdn.com/24x18/${country.code}.png` : null
+})
+
+// Validation functions
+const validateEmail = (email) => {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+  return emailRegex.test(email)
+}
+
+const validateWebsite = (url) => {
+  if (!url) return true // Optional field
+  try {
+    const urlRegex = /^(https?:\/\/)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)$/
+    return urlRegex.test(url)
+  } catch {
+    return false
+  }
+}
+
+const validateForm = () => {
+  validationErrors.value = {}
+  
+  // Email validation
+  if (!form.value.email) {
+    validationErrors.value.email = 'Email is required'
+  } else if (!validateEmail(form.value.email)) {
+    validationErrors.value.email = 'Please enter a valid email address (e.g., user@example.com)'
+  }
+  
+  // Website validation
+  if (form.value.website && !validateWebsite(form.value.website)) {
+    validationErrors.value.website = 'Please enter a valid website URL (e.g., https://example.com)'
+  }
+  
+  // Required fields
+  if (!form.value.firstName) validationErrors.value.firstName = 'First name is required'
+  if (!form.value.lastName) validationErrors.value.lastName = 'Last name is required'
+  if (!form.value.phone) validationErrors.value.phone = 'Phone number is required'
+  if (!form.value.company) validationErrors.value.company = 'Company name is required'
+  if (!form.value.message) validationErrors.value.message = 'Message is required'
+  
+  return Object.keys(validationErrors.value).length === 0
+}
+
+onMounted(() => {
+  loadCountries()
+  loadCountryCodes()
+})
 
 const submitForm = async () => {
+  // Validate form before submission
+  if (!validateForm()) {
+    submitError.value = 'Please fix the errors in the form before submitting'
+    return
+  }
+  
   isSubmitting.value = true
   submitError.value = ''
+  validationErrors.value = {}
   
   try {
     // Prepare data for backend API
@@ -342,7 +453,7 @@ const submitForm = async () => {
       first_name: form.value.firstName,
       last_name: form.value.lastName,
       email: form.value.email,
-      phone: form.value.phone,
+      phone: selectedCountryCode.value + form.value.phone, // Combine country code with phone number
       company_name: form.value.company,
       job_title: form.value.jobTitle,
       website: form.value.website,
@@ -361,7 +472,9 @@ const submitForm = async () => {
       data: JSON.stringify(formData)
     })
     
-    if (response.success) {
+    console.log('API Response:', response)
+    
+    if (response && response.success) {
       // Reset form
       form.value = {
         firstName: '',
@@ -385,6 +498,9 @@ const submitForm = async () => {
       setTimeout(() => {
         submitSuccess.value = false
       }, 5000)
+    } else {
+      // Handle API error response
+      submitError.value = response?.message || 'Failed to submit form. Please try again.'
     }
     
   } catch (error) {

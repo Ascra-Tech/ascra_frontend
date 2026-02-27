@@ -257,8 +257,12 @@ def create_lead_and_contact(data):
         if data.get('annual_revenue'):
             lead_doc['annual_revenue'] = data['annual_revenue']
         
+        print(f"About to create lead with data: {lead_doc}")
+        
         lead = frappe.get_doc(lead_doc)
         lead.flags.ignore_permissions = True
+        
+        print(f"Lead object created, about to insert...")
         lead.insert()
         
         print(f"Lead created successfully: {lead.name}")
@@ -330,7 +334,182 @@ def create_lead_and_contact(data):
             "message": f"An error occurred while processing your request: {str(e)}"
         }
 
+@frappe.whitelist(allow_guest=True)
+def get_countries():
+    """Get list of all countries for dropdown"""
+    try:
+        countries = frappe.get_all(
+            "Country",
+            fields=["name"],
+            order_by="name asc"
+        )
+        return {
+            "success": True,
+            "countries": [c.name for c in countries]
+        }
+    except Exception as e:
+        frappe.log_error(f"Error fetching countries: {str(e)}", "Get Countries Error")
+        return {
+            "success": False,
+            "message": str(e),
+            "countries": []
+        }
+
+@frappe.whitelist(allow_guest=True)
+def get_country_codes():
+    """Get country codes with ISD codes for phone field"""
+    try:
+        # Use Frappe's built-in country info API
+        country_info = frappe.call("frappe.geo.country_info.get_country_timezone_info")
+        
+        if not country_info or not country_info.get("country_info"):
+            # Fallback to basic country list
+            countries = frappe.get_all(
+                "Country",
+                fields=["name", "code"],
+                order_by="name asc"
+            )
+            return {
+                "success": True,
+                "country_codes": [{"label": c.name, "value": c.code or c.name} for c in countries]
+            }
+        
+        # Format country codes for Frappe UI Select component
+        country_codes = []
+        for country, info in country_info["country_info"].items():
+            if info.get("isd"):
+                country_codes.append({
+                    "label": f"{country} ({info['isd']})",
+                    "value": info["isd"],
+                    "country": country,
+                    "code": info.get("code", "").lower(),
+                    "isd": info["isd"]
+                })
+        
+        # Sort by country name
+        country_codes.sort(key=lambda x: x["country"])
+        
+        return {
+            "success": True,
+            "country_codes": country_codes
+        }
+    except Exception as e:
+        frappe.log_error(f"Error fetching country codes: {str(e)}", "Get Country Codes Error")
+        # Return basic fallback data
+        return {
+            "success": True,
+            "country_codes": [
+                {"label": "India (+91)", "value": "+91", "country": "India", "code": "in", "isd": "+91"},
+                {"label": "United States (+1)", "value": "+1", "country": "United States", "code": "us", "isd": "+1"},
+                {"label": "United Kingdom (+44)", "value": "+44", "country": "United Kingdom", "code": "gb", "isd": "+44"},
+            ]
+        }
+
 @frappe.whitelist()
+def get_user_profile():
+    """Get current user's profile information"""
+    try:
+        user = frappe.get_doc("User", frappe.session.user)
+        
+        return {
+            "success": True,
+            "user": {
+                "name": user.name,
+                "email": user.email,
+                "first_name": user.first_name,
+                "last_name": user.last_name,
+                "full_name": user.full_name,
+                "user_image": user.user_image,
+                "bio": user.bio,
+                "location": user.location,
+                "interest": user.interest,
+                "phone": user.phone,
+                "mobile_no": user.mobile_no,
+                "birth_date": user.birth_date,
+                "gender": user.gender,
+                "enabled": user.enabled,
+                "creation": user.creation,
+            }
+        }
+    except Exception as e:
+        frappe.log_error(f"Error fetching user profile: {str(e)}", "Get User Profile Error")
+        return {
+            "success": False,
+            "message": str(e)
+        }
+
+@frappe.whitelist()
+def update_user_profile(profile_data):
+    """Update current user's profile information"""
+    try:
+        profile_data = frappe.parse_json(profile_data)
+        
+        # Fields that can be updated
+        allowed_fields = ["first_name", "last_name", "user_image", "bio", "location", "interest", "phone", "mobile_no", "birth_date", "gender"]
+        
+        user = frappe.get_doc("User", frappe.session.user)
+        
+        for field in allowed_fields:
+            if field in profile_data:
+                user.set(field, profile_data[field])
+        
+        user.save(ignore_permissions=True)
+        
+        return {
+            "success": True,
+            "message": "Profile updated successfully",
+            "user": {
+                "name": user.name,
+                "email": user.email,
+                "first_name": user.first_name,
+                "last_name": user.last_name,
+                "full_name": user.full_name,
+                "user_image": user.user_image,
+                "bio": user.bio,
+                "location": user.location,
+                "interest": user.interest,
+            }
+        }
+    except Exception as e:
+        frappe.log_error(f"Error updating user profile: {str(e)}", "Update User Profile Error")
+        return {
+            "success": False,
+            "message": str(e)
+        }
+
+@frappe.whitelist()
+def update_password(old_password, new_password):
+    """Update user password"""
+    try:
+        from frappe.utils.password import check_password, update_password as frappe_update_password
+        
+        user = frappe.session.user
+        
+        # Verify old password
+        check_password(user, old_password)
+        
+        # Update to new password
+        frappe_update_password(user, new_password)
+        
+        frappe.db.commit()
+        
+        return {
+            "success": True,
+            "message": "Password updated successfully"
+        }
+    except frappe.AuthenticationError:
+        return {
+            "success": False,
+            "message": "Current password is incorrect"
+        }
+    except Exception as e:
+        frappe.log_error(f"Error updating password: {str(e)}", "Update Password Error")
+        return {
+            "success": False,
+            "message": "Failed to update password. Please try again."
+        }
+
+@frappe.whitelist(allow_guest=True)
 def get_company_info():
     """
     Get company information including logo for frontend display
@@ -1121,4 +1300,24 @@ def get_leave_types():
             "success": False,
             "message": f"Failed to load leave types: {str(e)}",
             "leave_types": []
+        }
+
+@frappe.whitelist()
+def check_user_roles():
+    """Check if current user has employee role"""
+    try:
+        user_roles = frappe.get_roles()
+        return {
+            "success": True,
+            "roles": {
+                "is_employee": "Employee" in user_roles
+            }
+        }
+    except Exception as e:
+        frappe.log_error(f"Error checking user roles: {str(e)}", "Check User Roles Error")
+        return {
+            "success": False,
+            "roles": {
+                "is_employee": False
+            }
         }

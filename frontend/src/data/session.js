@@ -26,8 +26,8 @@ export const session = reactive({
 			userResource.reload()
 			session.user = sessionUser()
 			session.login.reset()
-			// Redirect to dashboard for logged-in users
-			router.replace("/dashboard")
+			// Redirect to my account page for logged-in users
+			router.replace("/my-account")
 		},
 	}),
 	logout: createResource({
