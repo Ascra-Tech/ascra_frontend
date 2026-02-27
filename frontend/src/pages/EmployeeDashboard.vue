@@ -31,22 +31,136 @@
           </div>
         </div>
 
-        <!-- Employee Info Card -->
+        <!-- Employee Profile Card -->
         <div v-else class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-8">
-          <div class="flex items-center space-x-4">
-            <div class="w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center text-white text-xl font-bold">
-              {{ getInitials(employeeInfo?.employee_name || currentUser?.full_name || 'User') }}
-            </div>
-            <div>
-              <h2 class="text-xl font-bold text-gray-900">{{ employeeInfo?.employee_name || currentUser?.full_name || 'Amit Kumar' }}</h2>
-              <p class="text-gray-600">{{ employeeInfo?.designation || 'Employee' }}{{ employeeInfo?.department ? ` - ${employeeInfo.department}` : '' }}</p>
-              <p class="text-sm text-gray-500">Employee ID: {{ employeeInfo?.employee_number || 'Not Available' }}</p>
-              <div v-if="!employeeInfo && !error" class="mt-2">
-                <p class="text-xs text-orange-600 bg-orange-50 px-2 py-1 rounded">
-                  Employee record not linked. Contact administrator to link your user account with an Employee record.
-                </p>
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Profile Picture and Basic Info -->
+            <div class="flex flex-col items-center lg:items-start">
+              <div class="relative mb-4">
+                <img 
+                  v-if="employeeInfo?.image" 
+                  :src="employeeInfo.image" 
+                  :alt="employeeInfo.employee_name"
+                  class="w-24 h-24 rounded-full object-cover border-4 border-white shadow-lg"
+                  @error="handleImageError"
+                />
+                <div 
+                  v-else 
+                  class="w-24 h-24 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center text-white text-2xl font-bold shadow-lg"
+                >
+                  {{ getInitials(employeeInfo?.employee_name || currentUser?.full_name || 'User') }}
+                </div>
+                <div class="absolute -bottom-1 -right-1 w-6 h-6 bg-green-500 rounded-full border-2 border-white"></div>
+              </div>
+              <div class="text-center lg:text-left">
+                <h2 class="text-2xl font-bold text-gray-900 mb-1">{{ employeeInfo?.employee_name || currentUser?.full_name || 'Employee' }}</h2>
+                <p class="text-blue-600 font-semibold">{{ employeeInfo?.designation || 'Employee' }}</p>
+                <p class="text-gray-500">{{ employeeInfo?.department || 'General' }}</p>
+                <p class="text-sm text-gray-400 mt-1">ID: {{ employeeInfo?.employee_number || 'Not Available' }}</p>
               </div>
             </div>
+
+            <!-- Personal Information -->
+            <div>
+              <h3 class="text-lg font-semibold text-gray-900 mb-4">Personal Information</h3>
+              <div class="space-y-3">
+                <div class="flex justify-between">
+                  <span class="text-gray-600">Gender:</span>
+                  <span class="font-medium text-gray-900">{{ employeeInfo?.gender || 'Not specified' }}</span>
+                </div>
+                <div class="flex justify-between">
+                  <span class="text-gray-600">Date of Birth:</span>
+                  <span class="font-medium text-gray-900">{{ formatDate(employeeInfo?.date_of_birth) || 'Not specified' }}</span>
+                </div>
+                <div class="flex justify-between">
+                  <span class="text-gray-600">Marital Status:</span>
+                  <span class="font-medium text-gray-900">{{ employeeInfo?.marital_status || 'Not specified' }}</span>
+                </div>
+                <div class="flex justify-between">
+                  <span class="text-gray-600">Blood Group:</span>
+                  <span class="font-medium text-gray-900">{{ employeeInfo?.blood_group || 'Not specified' }}</span>
+                </div>
+                <div class="flex justify-between">
+                  <span class="text-gray-600">Mobile:</span>
+                  <span class="font-medium text-gray-900">{{ employeeInfo?.cell_number || 'Not specified' }}</span>
+                </div>
+                <div class="flex justify-between">
+                  <span class="text-gray-600">Personal Email:</span>
+                  <span class="font-medium text-gray-900 text-sm">{{ employeeInfo?.personal_email || 'Not specified' }}</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Employment Details -->
+            <div>
+              <h3 class="text-lg font-semibold text-gray-900 mb-4">Employment Details</h3>
+              <div class="space-y-3">
+                <div class="flex justify-between">
+                  <span class="text-gray-600">Company:</span>
+                  <span class="font-medium text-gray-900">{{ employeeInfo?.company || 'Not specified' }}</span>
+                </div>
+                <div class="flex justify-between">
+                  <span class="text-gray-600">Branch:</span>
+                  <span class="font-medium text-gray-900">{{ employeeInfo?.branch || 'Not specified' }}</span>
+                </div>
+                <div class="flex justify-between">
+                  <span class="text-gray-600">Date of Joining:</span>
+                  <span class="font-medium text-gray-900">{{ formatDate(employeeInfo?.date_of_joining) || 'Not specified' }}</span>
+                </div>
+                <div class="flex justify-between">
+                  <span class="text-gray-600">Reports To:</span>
+                  <span class="font-medium text-gray-900">{{ employeeInfo?.reports_to_name || 'Not specified' }}</span>
+                </div>
+                <div class="flex justify-between">
+                  <span class="text-gray-600">Status:</span>
+                  <span :class="getStatusClass(employeeInfo?.status)">{{ employeeInfo?.status || 'Active' }}</span>
+                </div>
+                <div class="flex justify-between" v-if="employeeInfo?.holiday_list">
+                  <span class="text-gray-600">Holiday List:</span>
+                  <span class="font-medium text-gray-900">{{ employeeInfo.holiday_list }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Emergency Contact Information -->
+          <div v-if="employeeInfo?.person_to_be_contacted || employeeInfo?.emergency_phone_number" class="mt-8 pt-6 border-t border-gray-200">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">Emergency Contact</h3>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div v-if="employeeInfo?.person_to_be_contacted">
+                <span class="text-gray-600">Contact Person:</span>
+                <p class="font-medium text-gray-900">{{ employeeInfo.person_to_be_contacted }}</p>
+              </div>
+              <div v-if="employeeInfo?.relation">
+                <span class="text-gray-600">Relation:</span>
+                <p class="font-medium text-gray-900">{{ employeeInfo.relation }}</p>
+              </div>
+              <div v-if="employeeInfo?.emergency_phone_number">
+                <span class="text-gray-600">Emergency Phone:</span>
+                <p class="font-medium text-gray-900">{{ employeeInfo.emergency_phone_number }}</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Address Information -->
+          <div v-if="employeeInfo?.current_address || employeeInfo?.permanent_address" class="mt-8 pt-6 border-t border-gray-200">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">Address Information</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div v-if="employeeInfo?.current_address">
+                <h4 class="font-medium text-gray-700 mb-2">Current Address</h4>
+                <p class="text-gray-600 text-sm">{{ employeeInfo.current_address }}</p>
+              </div>
+              <div v-if="employeeInfo?.permanent_address">
+                <h4 class="font-medium text-gray-700 mb-2">Permanent Address</h4>
+                <p class="text-gray-600 text-sm">{{ employeeInfo.permanent_address }}</p>
+              </div>
+            </div>
+          </div>
+
+          <div v-if="!employeeInfo && !error" class="mt-4">
+            <p class="text-sm text-orange-600 bg-orange-50 px-3 py-2 rounded-lg">
+              Employee record not linked. Contact administrator to link your user account with an Employee record.
+            </p>
           </div>
         </div>
 
@@ -607,10 +721,6 @@ const getInitials = (name) => {
   return name.split(' ').map(n => n.charAt(0)).join('').toUpperCase().substring(0, 2)
 }
 
-const formatDate = (dateString) => {
-  if (!dateString) return 'N/A'
-  return new Date(dateString).toLocaleDateString()
-}
 
 const formatTime = (timeString) => {
   if (!timeString) return 'N/A'
@@ -955,6 +1065,35 @@ const closeConfirmationModal = () => {
   showConfirmationModal.value = false
   confirmationMessage.value = ''
   confirmationType.value = 'success'
+}
+
+// Utility functions for enhanced employee profile
+const handleImageError = (event) => {
+  // Hide the broken image and show initials instead
+  event.target.style.display = 'none'
+}
+
+const formatDate = (dateString) => {
+  if (!dateString) return null
+  try {
+    return new Date(dateString).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    })
+  } catch (err) {
+    return dateString
+  }
+}
+
+const getStatusClass = (status) => {
+  switch (status) {
+    case 'Active': return 'bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs font-medium'
+    case 'Inactive': return 'bg-gray-100 text-gray-800 px-2 py-1 rounded-full text-xs font-medium'
+    case 'Suspended': return 'bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full text-xs font-medium'
+    case 'Left': return 'bg-red-100 text-red-800 px-2 py-1 rounded-full text-xs font-medium'
+    default: return 'bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-xs font-medium'
+  }
 }
 
 // Status styling functions

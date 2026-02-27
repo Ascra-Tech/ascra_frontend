@@ -344,10 +344,16 @@ def get_employee_info():
         if "Employee" not in user_roles:
             frappe.throw(_("Access denied. Employee role required."))
         
-        # Get employee record directly from database
+        # Get comprehensive employee record from database
         employee_data = frappe.db.get_value("Employee", {"user_id": user}, [
-            "name", "employee_name", "designation", "department", "company", 
-            "branch", "employee_number", "date_of_joining", "status", "image"
+            "name", "employee_name", "first_name", "middle_name", "last_name", 
+            "designation", "department", "company", "branch", "employee_number", 
+            "date_of_joining", "date_of_birth", "status", "image", "gender",
+            "cell_number", "personal_email", "company_email", "current_address",
+            "permanent_address", "emergency_phone_number", "person_to_be_contacted",
+            "relation", "marital_status", "blood_group", "reports_to", "salary_mode",
+            "ctc", "salary_currency", "contract_end_date", "notice_number_of_days",
+            "date_of_retirement", "holiday_list", "attendance_device_id"
         ], as_dict=True)
         
         if not employee_data:
@@ -356,19 +362,49 @@ def get_employee_info():
         # If employee_number is None, use the employee name (HR-EMP-00001) as fallback
         employee_id = employee_data.employee_number or employee_data.name
         
+        # Get reporting manager name if exists
+        reports_to_name = None
+        if employee_data.reports_to:
+            reports_to_name = frappe.db.get_value("Employee", employee_data.reports_to, "employee_name")
+        
         return {
             "success": True,
             "employee": {
                 "name": employee_data.name,
                 "employee_name": employee_data.employee_name,
+                "first_name": employee_data.first_name,
+                "middle_name": employee_data.middle_name,
+                "last_name": employee_data.last_name,
                 "designation": employee_data.designation or "Employee",
                 "department": employee_data.department or "General",
                 "company": employee_data.company,
                 "branch": employee_data.branch,
                 "employee_number": employee_id,
                 "date_of_joining": employee_data.date_of_joining,
+                "date_of_birth": employee_data.date_of_birth,
                 "status": employee_data.status,
-                "image": employee_data.image
+                "gender": employee_data.gender,
+                "image": employee_data.image,
+                "cell_number": employee_data.cell_number,
+                "personal_email": employee_data.personal_email,
+                "company_email": employee_data.company_email,
+                "current_address": employee_data.current_address,
+                "permanent_address": employee_data.permanent_address,
+                "emergency_phone_number": employee_data.emergency_phone_number,
+                "person_to_be_contacted": employee_data.person_to_be_contacted,
+                "relation": employee_data.relation,
+                "marital_status": employee_data.marital_status,
+                "blood_group": employee_data.blood_group,
+                "reports_to": employee_data.reports_to,
+                "reports_to_name": reports_to_name,
+                "salary_mode": employee_data.salary_mode,
+                "ctc": employee_data.ctc,
+                "salary_currency": employee_data.salary_currency,
+                "contract_end_date": employee_data.contract_end_date,
+                "notice_number_of_days": employee_data.notice_number_of_days,
+                "date_of_retirement": employee_data.date_of_retirement,
+                "holiday_list": employee_data.holiday_list,
+                "attendance_device_id": employee_data.attendance_device_id
             }
         }
         
