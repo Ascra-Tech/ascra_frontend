@@ -209,7 +209,7 @@
         <div class="space-y-8">
           <!-- Contact Cards -->
           <div class="bg-white rounded-2xl p-8 shadow-lg">
-            <h3 class="text-2xl font-bold text-gray-900 mb-6">Contact Information</h3>
+            <h3 class="text-2xl font-bold text-gray-900 mb-6">Reach Out to Our Office</h3>
             
             <div class="space-y-6">
               <div class="flex items-start space-x-4">
@@ -220,8 +220,8 @@
                 </div>
                 <div>
                   <h4 class="font-semibold text-gray-900">Email</h4>
-                  <p class="text-gray-600">hello@ascratech.com</p>
-                  <p class="text-gray-600">projects@ascratech.com</p>
+                  <p class="text-gray-600">connect@ascratech.com</p>
+                  <p class="text-gray-600">careers@ascratech.com</p>
                 </div>
               </div>
               
@@ -233,8 +233,8 @@
                 </div>
                 <div>
                   <h4 class="font-semibold text-gray-900">Phone</h4>
-                  <p class="text-gray-600">+1 (555) 123-4567</p>
-                  <p class="text-gray-600">+1 (555) 987-6543</p>
+                  <p class="text-gray-600">+91-9920536039</p>
+                  <p class="text-gray-600">+91 95118 66889</p>
                 </div>
               </div>
               
@@ -246,9 +246,10 @@
                   </svg>
                 </div>
                 <div>
-                  <h4 class="font-semibold text-gray-900">Office</h4>
-                  <p class="text-gray-600">123 Tech Street</p>
-                  <p class="text-gray-600">Innovation District, CA 90210</p>
+                  <h4 class="font-semibold text-gray-900">India Office</h4>
+                  <p class="text-gray-600">601, Nirmal Corporate Center</p>
+                  <p class="text-gray-600">LBS Marg, Mulund West</p>
+                  <p class="text-gray-600">Mumbai - 400080, India</p>
                 </div>
               </div>
             </div>

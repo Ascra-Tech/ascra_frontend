@@ -24,6 +24,9 @@
           <a @click="navigateToSection('services')" class="text-gray-700 hover:text-blue-600 px-3 py-2 text-sm font-medium transition-colors cursor-pointer">
             Services
           </a>
+          <router-link to="/erpnext" class="text-gray-700 hover:text-blue-600 px-3 py-2 text-sm font-medium transition-colors">
+            ERPNext
+          </router-link>
           <a @click="navigateToSection('portfolio')" class="text-gray-700 hover:text-blue-600 px-3 py-2 text-sm font-medium transition-colors cursor-pointer">
             Portfolio
           </a>
@@ -89,6 +92,9 @@
         <a @click="navigateToSectionMobile('services')" class="block text-gray-700 hover:text-blue-600 px-3 py-2 text-base font-medium cursor-pointer">
           Services
         </a>
+        <router-link to="/erpnext" @click="mobileMenuOpen = false" class="block text-gray-700 hover:text-blue-600 px-3 py-2 text-base font-medium">
+          ERPNext
+        </router-link>
         <a @click="navigateToSectionMobile('portfolio')" class="block text-gray-700 hover:text-blue-600 px-3 py-2 text-base font-medium cursor-pointer">
           Portfolio
         </a>

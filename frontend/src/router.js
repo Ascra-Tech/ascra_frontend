@@ -33,6 +33,12 @@ const routes = [
 		component: () => import("@/pages/EmployeeDashboard.vue"),
 		meta: { requiresAuth: true, requiresEmployeeRole: true }
 	},
+	{
+		name: "ERPNext",
+		path: "/erpnext",
+		component: () => import("@/pages/ERPNext.vue"),
+		meta: { requiresAuth: false }
+	},
 ]
 
 const router = createRouter({
