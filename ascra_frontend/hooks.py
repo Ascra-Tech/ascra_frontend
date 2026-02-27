@@ -1,7 +1,7 @@
 app_name = "ascra_frontend"
-app_title = "Ascra Frontend"
+app_title = "ERPNext Frontend"
 app_publisher = "Amit Kumar"
-app_description = "Frontend of Ascratech Website"
+app_description = "Frontend for ERPNext Website"
 app_email = "amit@ascratech.com"
 app_license = "mit"
 
