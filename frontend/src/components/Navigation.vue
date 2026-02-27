@@ -5,10 +5,17 @@
         <!-- Logo -->
         <div class="flex items-center">
           <div class="flex-shrink-0 flex items-center">
-            <div class="h-8 w-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
-              <span class="text-white font-bold text-lg">A</span>
+            <div v-if="companyInfo?.logo && !logoError" class="h-10 w-auto max-w-[120px] flex items-center">
+              <img 
+                :src="companyInfo.logo" 
+                :alt="companyInfo.company_name || 'Company Logo'"
+                class="h-full w-auto object-contain max-h-10"
+                @error="handleLogoError"
+              />
             </div>
-            <span class="ml-2 text-xl font-bold text-gray-900">Ascratech</span>
+            <div v-else class="h-10 w-10 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
+              <span class="text-white font-bold text-lg">{{ getCompanyInitials() }}</span>
+            </div>
           </div>
         </div>
 
@@ -149,6 +156,8 @@ import { session } from '../data/session'
 
 const mobileMenuOpen = ref(false)
 const userRoles = ref({ roles: [], is_employee: false })
+const companyInfo = ref(null)
+const logoError = ref(false)
 
 import { useRouter, useRoute } from 'vue-router'
 const router = useRouter()
@@ -188,6 +197,34 @@ const getUserInitials = (email) => {
   return name.charAt(0).toUpperCase()
 }
 
+const getCompanyInitials = () => {
+  if (companyInfo.value?.company_name) {
+    return companyInfo.value.company_name.charAt(0).toUpperCase()
+  }
+  if (companyInfo.value?.abbr) {
+    return companyInfo.value.abbr.charAt(0).toUpperCase()
+  }
+  return 'A'
+}
+
+const handleLogoError = () => {
+  logoError.value = true
+}
+
+const loadCompanyInfo = async () => {
+  try {
+    const response = await call('ascra_frontend.api.get_company_info')
+    if (response.success) {
+      companyInfo.value = response.company
+      logoError.value = false
+    } else {
+      console.error('Failed to load company info:', response.message)
+    }
+  } catch (err) {
+    console.error('Error loading company info:', err)
+  }
+}
+
 const loadUserRoles = async () => {
   if (session.isLoggedIn) {
     try {
@@ -217,8 +254,9 @@ watch(() => session.isLoggedIn, (newValue) => {
   }
 })
 
-// Load roles on mount
+// Load roles and company info on mount
 onMounted(() => {
+  loadCompanyInfo()
   if (session.isLoggedIn) {
     loadUserRoles()
   }

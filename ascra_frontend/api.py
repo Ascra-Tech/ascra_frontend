@@ -200,9 +200,15 @@ def create_lead_and_contact(data):
     Advanced contact form that creates Lead and Contact records
     """
     try:
+        # Debug: Log received data
+        print(f"Received data type: {type(data)}")
+        print(f"Received data: {data}")
+        
         # Parse data if it's a string
         if isinstance(data, str):
             data = json.loads(data)
+        
+        print(f"Parsed data: {data}")
         
         # Validate required fields
         required_fields = ['first_name', 'last_name', 'email', 'phone', 'company_name', 'message']
@@ -220,7 +226,7 @@ def create_lead_and_contact(data):
                 "message": "Please enter a valid email address"
             }
         
-        # Create Lead
+        # Create Lead - only include simple fields to avoid Link field validation errors
         lead_doc = {
             "doctype": "Lead",
             "first_name": data['first_name'],
@@ -228,24 +234,35 @@ def create_lead_and_contact(data):
             "email_id": data['email'],
             "mobile_no": data['phone'],
             "company_name": data['company_name'],
-            "source": "Website",
             "status": "Lead",
             "request_type": data.get('request_type', 'Product Enquiry'),
-            "industry": data.get('industry'),
             "job_title": data.get('job_title'),
             "website": data.get('website'),
             "city": data.get('city'),
             "state": data.get('state'),
-            "country": data.get('country'),
-            "annual_revenue": data.get('annual_revenue'),
             "no_of_employees": data.get('no_of_employees'),
-            "territory": data.get('territory', 'All Territories'),
+            "territory": "All Territories",
             "company": frappe.defaults.get_user_default("Company") or frappe.db.get_single_value("Global Defaults", "default_company")
         }
+        
+        # Try to add source if "Website" Lead Source exists
+        if frappe.db.exists("Lead Source", "Website"):
+            lead_doc['source'] = "Website"
+        
+        # Add country only if it's provided (Link field)
+        if data.get('country'):
+            lead_doc['country'] = data['country']
+        
+        # Add annual revenue only if provided
+        if data.get('annual_revenue'):
+            lead_doc['annual_revenue'] = data['annual_revenue']
         
         lead = frappe.get_doc(lead_doc)
         lead.flags.ignore_permissions = True
         lead.insert()
+        
+        print(f"Lead created successfully: {lead.name}")
+        frappe.log_error(f"Lead created: {lead.name} for {data['email']}", "Contact Form - Lead Created")
         
         # Create Contact
         contact_doc = {
@@ -263,6 +280,8 @@ def create_lead_and_contact(data):
         contact = frappe.get_doc(contact_doc)
         contact.flags.ignore_permissions = True
         contact.insert()
+        
+        print(f"Contact created successfully: {contact.name}")
         
         # Link Contact to Lead
         contact.append("links", {
@@ -291,6 +310,8 @@ def create_lead_and_contact(data):
             comm.flags.ignore_permissions = True
             comm.insert()
         
+        print(f"Lead and Contact creation completed successfully")
+        
         return {
             "success": True,
             "message": _("Thank you for your inquiry! We will get back to you soon."),
@@ -299,10 +320,71 @@ def create_lead_and_contact(data):
         }
         
     except Exception as e:
+        import traceback
+        error_details = traceback.format_exc()
+        frappe.log_error(f"Lead/Contact creation error: {error_details}", "Contact Form Submission Error")
         print(f"Lead/Contact creation error: {str(e)}")
+        print(f"Full traceback: {error_details}")
         return {
             "success": False,
             "message": f"An error occurred while processing your request: {str(e)}"
+        }
+
+@frappe.whitelist()
+def get_company_info():
+    """
+    Get company information including logo for frontend display
+    """
+    try:
+        # Get user's default company or system default
+        user_company = frappe.defaults.get_user_default("Company")
+        if not user_company:
+            user_company = frappe.db.get_single_value("Global Defaults", "default_company")
+        
+        if not user_company:
+            # Get the first available company if no defaults are set
+            companies = frappe.get_all("Company", limit=1, pluck="name")
+            if companies:
+                user_company = companies[0]
+            else:
+                return {
+                    "success": False,
+                    "message": "No company found in the system"
+                }
+        
+        # Get comprehensive company information
+        company_data = frappe.db.get_value("Company", user_company, [
+            "name", "company_name", "abbr", "company_logo", "domain", 
+            "country", "phone_no", "email", "website", "company_description"
+        ], as_dict=True)
+        
+        if not company_data:
+            return {
+                "success": False,
+                "message": f"Company '{user_company}' not found"
+            }
+        
+        return {
+            "success": True,
+            "company": {
+                "name": company_data.name,
+                "company_name": company_data.company_name,
+                "abbr": company_data.abbr,
+                "logo": company_data.company_logo,
+                "domain": company_data.domain,
+                "country": company_data.country,
+                "phone_no": company_data.phone_no,
+                "email": company_data.email,
+                "website": company_data.website,
+                "description": company_data.company_description
+            }
+        }
+        
+    except Exception as e:
+        frappe.log_error(f"Get company info error: {str(e)}")
+        return {
+            "success": False,
+            "message": str(e)
         }
 
 @frappe.whitelist()
