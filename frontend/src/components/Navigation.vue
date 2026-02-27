@@ -93,15 +93,6 @@
             <span class="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
           </button>
 
-          <!-- PWA Install Button -->
-          <button 
-            v-if="pwa.isInstallable && session.isLoggedIn"
-            @click="pwa.install"
-            class="px-3 py-2 bg-blue-600 text-white rounded-md text-sm font-medium hover:bg-blue-700 transition-colors"
-          >
-            Install App
-          </button>
-
           <!-- Help Dropdown -->
           <Dropdown :options="helpMenuOptions" v-if="session.isLoggedIn">
             <template #default="{ open }">
@@ -331,6 +322,12 @@ const helpMenuOptions = computed(() => [
     onClick: () => window.open('https://github.com/frappe/erpnext/issues', '_blank')
   },
   { label: '', component: 'divider' },
+  {
+    label: 'Install App',
+    icon: 'download',
+    onClick: () => pwa.install(),
+    condition: () => pwa.isInstallable && session.isLoggedIn
+  },
   {
     label: 'Keyboard Shortcuts',
     icon: 'command',
