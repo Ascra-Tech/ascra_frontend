@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50">
+  <div class="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50 dark:from-gray-900 dark:to-gray-800">
     <!-- Navigation -->
     <Navigation />
     
@@ -8,14 +8,14 @@
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <!-- Header -->
         <div class="mb-8">
-          <h1 class="text-3xl font-bold text-gray-900">My Account</h1>
-          <p class="text-gray-600 mt-2">Manage your profile and account settings</p>
+          <h1 class="text-3xl font-bold text-gray-900 dark:text-white">My Account</h1>
+          <p class="text-gray-600 dark:text-gray-300 mt-2">Manage your profile and account settings</p>
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <!-- Sidebar - Profile Card -->
           <div class="lg:col-span-1">
-            <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
               <!-- Profile Image -->
               <div class="text-center mb-6">
                 <div v-if="userProfile.user_image" class="w-32 h-32 mx-auto rounded-full overflow-hidden border-4 border-blue-100">
@@ -24,9 +24,9 @@
                 <div v-else class="w-32 h-32 mx-auto rounded-full bg-gradient-to-r from-blue-500 to-purple-500 flex items-center justify-center text-white text-4xl font-bold">
                   {{ getUserInitials }}
                 </div>
-                <h2 class="mt-4 text-xl font-bold text-gray-900">{{ userProfile.full_name || userProfile.email }}</h2>
-                <p class="text-gray-600 text-sm">{{ userProfile.email }}</p>
-                <p v-if="userProfile.location" class="text-gray-500 text-sm mt-2">
+                <h2 class="mt-4 text-xl font-bold text-gray-900 dark:text-white">{{ userProfile.full_name || userProfile.email }}</h2>
+                <p class="text-gray-600 dark:text-gray-300 text-sm">{{ userProfile.email }}</p>
+                <p v-if="userProfile.location" class="text-gray-500 dark:text-gray-400 text-sm mt-2">
                   <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
@@ -36,19 +36,19 @@
               </div>
 
               <!-- User Stats -->
-              <div class="border-t border-gray-200 pt-6">
+              <div class="border-t border-gray-200 dark:border-gray-600 pt-6">
                 <div class="space-y-4">
                   <div class="flex items-center justify-between">
-                    <span class="text-sm text-gray-600">Member Since</span>
-                    <span class="text-sm font-medium text-gray-900">{{ formatDate(userProfile.creation) }}</span>
+                    <span class="text-sm text-gray-600 dark:text-gray-400">Member Since</span>
+                    <span class="text-sm font-medium text-gray-900 dark:text-white">{{ formatDate(userProfile.creation) }}</span>
                   </div>
                   <div v-if="userProfile.interest" class="flex items-center justify-between">
-                    <span class="text-sm text-gray-600">Interests</span>
-                    <span class="text-sm font-medium text-gray-900">{{ userProfile.interest }}</span>
+                    <span class="text-sm text-gray-600 dark:text-gray-400">Interests</span>
+                    <span class="text-sm font-medium text-gray-900 dark:text-white">{{ userProfile.interest }}</span>
                   </div>
                   <div class="flex items-center justify-between">
-                    <span class="text-sm text-gray-600">Account Status</span>
-                    <span :class="userProfile.enabled ? 'text-green-600' : 'text-red-600'" class="text-sm font-medium">
+                    <span class="text-sm text-gray-600 dark:text-gray-400">Account Status</span>
+                    <span :class="userProfile.enabled ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'" class="text-sm font-medium">
                       {{ userProfile.enabled ? 'Active' : 'Inactive' }}
                     </span>
                   </div>
@@ -56,7 +56,7 @@
               </div>
 
               <!-- Quick Actions -->
-              <div class="border-t border-gray-200 pt-6 mt-6 space-y-3">
+              <div class="border-t border-gray-200 dark:border-gray-600 pt-6 mt-6 space-y-3">
                 <Button 
                   variant="solid" 
                   class="w-full"
@@ -88,29 +88,29 @@
           <!-- Main Content Area -->
           <div class="lg:col-span-2">
             <!-- Success/Error Messages -->
-            <div v-if="successMessage" class="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg">
+            <div v-if="successMessage" class="mb-6 p-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg">
               <div class="flex items-center">
-                <svg class="w-5 h-5 text-green-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-5 h-5 text-green-600 dark:text-green-400 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                 </svg>
-                <p class="text-green-800">{{ successMessage }}</p>
+                <p class="text-green-800 dark:text-green-200">{{ successMessage }}</p>
               </div>
             </div>
 
-            <div v-if="errorMessage" class="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+            <div v-if="errorMessage" class="mb-6 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
               <div class="flex items-center">
-                <svg class="w-5 h-5 text-red-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-5 h-5 text-red-600 dark:text-red-400 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                 </svg>
-                <p class="text-red-800">{{ errorMessage }}</p>
+                <p class="text-red-800 dark:text-red-200">{{ errorMessage }}</p>
               </div>
             </div>
 
             <!-- Profile Edit Tab -->
-            <div v-if="activeTab === 'profile'" class="bg-white rounded-xl shadow-sm border border-gray-200">
-              <div class="p-6 border-b border-gray-200">
-                <h2 class="text-lg font-semibold text-gray-900">Profile Information</h2>
-                <p class="text-sm text-gray-600 mt-1">Update your personal information and profile details</p>
+            <div v-if="activeTab === 'profile'" class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
+              <div class="p-6 border-b border-gray-200 dark:border-gray-700">
+                <h2 class="text-lg font-semibold text-gray-900 dark:text-white">Profile Information</h2>
+                <p class="text-sm text-gray-600 dark:text-gray-300 mt-1">Update your personal information and profile details</p>
               </div>
               
               <form @submit.prevent="updateProfile" class="p-6 space-y-6">

@@ -1,5 +1,5 @@
 <template>
-  <nav class="bg-white shadow-md fixed w-full top-0 z-50 border-b border-gray-200">
+  <nav class="bg-white dark:bg-gray-900 shadow-md fixed w-full top-0 z-50 border-b border-gray-200 dark:border-gray-700">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex justify-between h-16">
         <!-- Logo -->
@@ -23,42 +23,42 @@
         <div class="hidden md:flex items-center space-x-1">
           <router-link 
             to="/" 
-            class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 transition-colors"
+            class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
           >
             Home
           </router-link>
           
           <a 
             @click="navigateToSection('services')" 
-            class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 transition-colors cursor-pointer"
+            class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors cursor-pointer"
           >
             Services
           </a>
           
           <router-link 
             to="/erpnext" 
-            class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 transition-colors"
+            class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
           >
             ERPNext
           </router-link>
           
           <a 
             @click="navigateToSection('portfolio')" 
-            class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 transition-colors cursor-pointer"
+            class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors cursor-pointer"
           >
             Portfolio
           </a>
           
           <a 
             @click="navigateToSection('about')" 
-            class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 transition-colors cursor-pointer"
+            class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors cursor-pointer"
           >
             About
           </a>
           
           <a 
             @click="navigateToSection('contact')" 
-            class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 transition-colors cursor-pointer"
+            class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors cursor-pointer"
           >
             Contact
           </a>
@@ -69,7 +69,7 @@
           <!-- Notifications (for logged in users) -->
           <button 
             v-if="session.isLoggedIn"
-            class="p-2 text-gray-600 hover:text-blue-600 hover:bg-gray-50 rounded-lg transition-colors relative"
+            class="p-2 text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-lg transition-colors relative"
             @click="showNotifications = !showNotifications"
           >
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -78,10 +78,17 @@
             <span class="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
           </button>
 
+          <!-- Theme Switcher -->
+          <Switch 
+            :model-value="theme.isDark" 
+            @update:model-value="(value) => theme.setTheme(value)"
+            class="ml-2"
+          />
+
           <!-- Help Dropdown -->
           <Dropdown :options="helpMenuOptions" v-if="session.isLoggedIn">
             <template #default="{ open }">
-              <button class="px-3 py-2 text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-lg transition-colors flex items-center space-x-1">
+              <button class="px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-lg transition-colors flex items-center space-x-1">
                 <span>Help</span>
                 <svg class="w-4 h-4" :class="{ 'rotate-180': open }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
@@ -93,7 +100,7 @@
           <!-- User Menu Dropdown (for logged in users) -->
           <Dropdown :options="userMenuOptions" v-if="session.isLoggedIn">
             <template #default="{ open }">
-              <button class="flex items-center space-x-2 px-2 py-1 rounded-lg hover:bg-gray-50 transition-colors">
+              <button class="flex items-center space-x-2 px-2 py-1 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
                 <Avatar 
                   :label="getUserInitials(session.user)" 
                   :image="userProfile?.user_image"
@@ -108,23 +115,25 @@
           </Dropdown>
 
           <!-- Login/Signup Buttons (for guests) -->
-          <div v-else class="flex items-center space-x-2">
-            <router-link to="/account/login">
-              <Button theme="gray" variant="outline" size="sm">
-                Login
-              </Button>
+          <div v-else class="flex items-center space-x-3">
+            <router-link 
+              to="/account/login" 
+              class="px-4 py-2 text-sm font-medium text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors"
+            >
+              Login
             </router-link>
-            <router-link to="/account/signup">
-              <Button theme="blue" variant="solid" size="sm">
-                Sign Up
-              </Button>
+            <router-link 
+              to="/account/signup" 
+              class="px-4 py-2 text-sm font-medium text-white bg-blue-600 dark:bg-blue-500 hover:bg-blue-700 dark:hover:bg-blue-600 rounded-lg transition-colors"
+            >
+              Sign Up
             </router-link>
           </div>
 
           <!-- Mobile Menu Button -->
           <button 
             @click="mobileMenuOpen = !mobileMenuOpen" 
-            class="md:hidden p-2 rounded-md text-gray-700 hover:text-blue-600 hover:bg-gray-50"
+            class="md:hidden p-2 rounded-md text-gray-700 hover:text-blue-600 hover:bg-gray-50 dark:hover:bg-gray-800"
           >
             <svg v-if="!mobileMenuOpen" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
@@ -138,49 +147,49 @@
     </div>
 
     <!-- Mobile Menu -->
-    <div v-if="mobileMenuOpen" class="md:hidden border-t border-gray-200 bg-white">
+    <div v-if="mobileMenuOpen" class="md:hidden bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700">
       <div class="px-2 pt-2 pb-3 space-y-1">
         <router-link 
           to="/" 
-          class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50"
+          class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-gray-50 dark:hover:bg-gray-800"
           @click="mobileMenuOpen = false"
         >
           Home
         </router-link>
         <a 
           @click="navigateToSection('services'); mobileMenuOpen = false" 
-          class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 cursor-pointer"
+          class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer"
         >
           Services
         </a>
         <router-link 
           to="/erpnext" 
-          class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50"
+          class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-gray-50 dark:hover:bg-gray-800"
           @click="mobileMenuOpen = false"
         >
           ERPNext
         </router-link>
         <a 
           @click="navigateToSection('portfolio'); mobileMenuOpen = false" 
-          class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 cursor-pointer"
+          class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer"
         >
           Portfolio
         </a>
         <a 
           @click="navigateToSection('about'); mobileMenuOpen = false" 
-          class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 cursor-pointer"
+          class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer"
         >
           About
         </a>
         <a 
           @click="navigateToSection('contact'); mobileMenuOpen = false" 
-          class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 cursor-pointer"
+          class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer"
         >
           Contact
         </a>
 
         <!-- Mobile User Menu -->
-        <div v-if="session.isLoggedIn" class="border-t border-gray-200 pt-4 mt-4">
+        <div v-if="session.isLoggedIn" class="border-t border-gray-200 pt-4 mt-4 dark:border-gray-700">
           <div class="flex items-center px-3 py-2 mb-2">
             <Avatar 
               :label="getUserInitials(session.user)" 
@@ -189,34 +198,34 @@
               class="w-10 h-10"
             />
             <div class="ml-3">
-              <div class="text-sm font-medium text-gray-900">{{ userProfile?.full_name || session.user }}</div>
-              <div class="text-xs text-gray-500">{{ session.user }}</div>
+              <div class="text-sm font-medium text-gray-900 dark:text-gray-100">{{ userProfile?.full_name || session.user }}</div>
+              <div class="text-xs text-gray-500 dark:text-gray-400">{{ session.user }}</div>
             </div>
           </div>
           <router-link 
             to="/my-account" 
-            class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50"
+            class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-gray-50 dark:hover:bg-gray-800"
             @click="mobileMenuOpen = false"
           >
             My Account
           </router-link>
           <a 
             href="/app" 
-            class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50"
+            class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-gray-50 dark:hover:bg-gray-800"
           >
             Open Desk
           </a>
           <router-link 
             v-if="userRoles.is_employee" 
             to="/employee-dashboard" 
-            class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50"
+            class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-gray-50 dark:hover:bg-gray-800"
             @click="mobileMenuOpen = false"
           >
             Employee Dashboard
           </router-link>
           <button 
             @click="handleLogout" 
-            class="w-full text-left block px-3 py-2 rounded-md text-base font-medium text-red-600 hover:bg-red-50"
+            class="w-full text-left block px-3 py-2 rounded-md text-base font-medium text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20"
           >
             Log out
           </button>
@@ -229,12 +238,14 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
-import { call, Button, Dropdown, Avatar } from 'frappe-ui'
+import { call, Button, Dropdown, Avatar, Switch } from 'frappe-ui'
 import { session } from '../data/session'
 import { usePWA } from '@/composables/usePWA'
+import { useTheme } from '@/composables/useTheme'
 
 const router = useRouter()
 const pwa = usePWA()
+const theme = useTheme()
 
 // State
 const mobileMenuOpen = ref(false)

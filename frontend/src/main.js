@@ -1,8 +1,11 @@
 import { createApp } from "vue"
+import { FrappeUI } from "frappe-ui"
 
 import App from "./App.vue"
 import router from "./router"
 import { initSocket } from "./socket"
+import "./index.css"
+import { useTheme } from "./composables/useTheme"
 
 import {
 	Alert,
@@ -46,5 +49,9 @@ app.config.globalProperties.$socket = socket
 for (const key in globalComponents) {
 	app.component(key, globalComponents[key])
 }
+
+// Initialize theme before mounting app
+const theme = useTheme()
+theme.initTheme()
 
 app.mount("#app")

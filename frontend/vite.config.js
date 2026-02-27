@@ -44,5 +44,12 @@ export default defineConfig({
 	},
 	server: {
 		allowedHosts: true,
+		hmr: {
+           port: 8080,
+           clientPort: 8080,
+       }, 
+        watch: {
+           usePolling: true,
+       },
 	},
 })

@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen bg-gray-50">
+  <div class="min-h-screen bg-surface-gray-1">
     <!-- Navigation -->
     <Navigation />
     
@@ -8,10 +8,10 @@
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <!-- Header -->
         <div class="mb-8">
-          <h1 class="text-3xl font-bold text-gray-900">
+          <h1 class="text-3xl font-bold text-ink-gray-9">
             Employee Dashboard
           </h1>
-          <p class="text-gray-600 mt-2" v-if="employeeInfo">
+          <p class="text-ink-gray-6 mt-2" v-if="employeeInfo">
             Welcome, {{ employeeInfo.employee_name }}! Manage your attendance, leaves, and view salary information.
           </p>
         </div>
@@ -22,7 +22,7 @@
         </div>
 
         <!-- Error State -->
-        <div v-else-if="error" class="bg-red-50 border border-red-200 rounded-lg p-6 mb-8">
+        <div v-else-if="error" class="bg-surface-red-2 border border-outline-red-2 rounded-lg p-6 mb-8">
           <div class="flex items-center">
             <svg class="w-6 h-6 text-red-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
@@ -32,7 +32,7 @@
         </div>
 
         <!-- Employee Profile Card -->
-        <div v-else class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-8">
+        <div v-else class="bg-surface-white rounded-xl shadow-sm border border-outline-gray-2 p-6 mb-8">
           <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <!-- Profile Picture and Basic Info -->
             <div class="flex flex-col items-center lg:items-start">
@@ -53,106 +53,106 @@
                 <div class="absolute -bottom-1 -right-1 w-6 h-6 bg-green-500 rounded-full border-2 border-white"></div>
               </div>
               <div class="text-center lg:text-left">
-                <h2 class="text-2xl font-bold text-gray-900 mb-1">{{ employeeInfo?.employee_name || currentUser?.full_name || 'Employee' }}</h2>
-                <p class="text-blue-600 font-semibold">{{ employeeInfo?.designation || 'Employee' }}</p>
-                <p class="text-gray-500">{{ employeeInfo?.department || 'General' }}</p>
-                <p class="text-sm text-gray-400 mt-1">ID: {{ employeeInfo?.employee_number || 'Not Available' }}</p>
+                <h2 class="text-2xl font-bold text-ink-gray-9 mb-1">{{ employeeInfo?.employee_name || currentUser?.full_name || 'Employee' }}</h2>
+                <p class="text-ink-blue-3 font-semibold">{{ employeeInfo?.designation || 'Employee' }}</p>
+                <p class="text-ink-gray-5">{{ employeeInfo?.department || 'General' }}</p>
+                <p class="text-sm text-ink-gray-4 mt-1">ID: {{ employeeInfo?.employee_number || 'Not Available' }}</p>
               </div>
             </div>
 
             <!-- Personal Information -->
             <div>
-              <h3 class="text-lg font-semibold text-gray-900 mb-4">Personal Information</h3>
+              <h3 class="text-lg font-semibold text-ink-gray-9 mb-4">Personal Information</h3>
               <div class="space-y-3">
                 <div class="flex justify-between">
-                  <span class="text-gray-600">Gender:</span>
-                  <span class="font-medium text-gray-900">{{ employeeInfo?.gender || 'Not specified' }}</span>
+                  <span class="text-ink-gray-6">Gender:</span>
+                  <span class="font-medium text-ink-gray-9">{{ employeeInfo?.gender || 'Not specified' }}</span>
                 </div>
                 <div class="flex justify-between">
-                  <span class="text-gray-600">Date of Birth:</span>
-                  <span class="font-medium text-gray-900">{{ formatDate(employeeInfo?.date_of_birth) || 'Not specified' }}</span>
+                  <span class="text-ink-gray-6">Date of Birth:</span>
+                  <span class="font-medium text-ink-gray-9">{{ formatDate(employeeInfo?.date_of_birth) || 'Not specified' }}</span>
                 </div>
                 <div class="flex justify-between">
-                  <span class="text-gray-600">Marital Status:</span>
-                  <span class="font-medium text-gray-900">{{ employeeInfo?.marital_status || 'Not specified' }}</span>
+                  <span class="text-ink-gray-6">Marital Status:</span>
+                  <span class="font-medium text-ink-gray-9">{{ employeeInfo?.marital_status || 'Not specified' }}</span>
                 </div>
                 <div class="flex justify-between">
-                  <span class="text-gray-600">Blood Group:</span>
-                  <span class="font-medium text-gray-900">{{ employeeInfo?.blood_group || 'Not specified' }}</span>
+                  <span class="text-ink-gray-6">Blood Group:</span>
+                  <span class="font-medium text-ink-gray-9">{{ employeeInfo?.blood_group || 'Not specified' }}</span>
                 </div>
                 <div class="flex justify-between">
-                  <span class="text-gray-600">Mobile:</span>
-                  <span class="font-medium text-gray-900">{{ employeeInfo?.cell_number || 'Not specified' }}</span>
+                  <span class="text-ink-gray-6">Mobile:</span>
+                  <span class="font-medium text-ink-gray-9">{{ employeeInfo?.cell_number || 'Not specified' }}</span>
                 </div>
                 <div class="flex justify-between">
-                  <span class="text-gray-600">Personal Email:</span>
-                  <span class="font-medium text-gray-900 text-sm">{{ employeeInfo?.personal_email || 'Not specified' }}</span>
+                  <span class="text-ink-gray-6">Personal Email:</span>
+                  <span class="font-medium text-ink-gray-9 text-sm">{{ employeeInfo?.personal_email || 'Not specified' }}</span>
                 </div>
               </div>
             </div>
 
             <!-- Employment Details -->
             <div>
-              <h3 class="text-lg font-semibold text-gray-900 mb-4">Employment Details</h3>
+              <h3 class="text-lg font-semibold text-ink-gray-9 mb-4">Employment Details</h3>
               <div class="space-y-3">
                 <div class="flex justify-between">
-                  <span class="text-gray-600">Company:</span>
-                  <span class="font-medium text-gray-900">{{ employeeInfo?.company || 'Not specified' }}</span>
+                  <span class="text-ink-gray-6">Company:</span>
+                  <span class="font-medium text-ink-gray-9">{{ employeeInfo?.company || 'Not specified' }}</span>
                 </div>
                 <div class="flex justify-between">
-                  <span class="text-gray-600">Branch:</span>
-                  <span class="font-medium text-gray-900">{{ employeeInfo?.branch || 'Not specified' }}</span>
+                  <span class="text-ink-gray-6">Branch:</span>
+                  <span class="font-medium text-ink-gray-9">{{ employeeInfo?.branch || 'Not specified' }}</span>
                 </div>
                 <div class="flex justify-between">
-                  <span class="text-gray-600">Date of Joining:</span>
-                  <span class="font-medium text-gray-900">{{ formatDate(employeeInfo?.date_of_joining) || 'Not specified' }}</span>
+                  <span class="text-ink-gray-6">Date of Joining:</span>
+                  <span class="font-medium text-ink-gray-9">{{ formatDate(employeeInfo?.date_of_joining) || 'Not specified' }}</span>
                 </div>
                 <div class="flex justify-between">
-                  <span class="text-gray-600">Reports To:</span>
-                  <span class="font-medium text-gray-900">{{ employeeInfo?.reports_to_name || 'Not specified' }}</span>
+                  <span class="text-ink-gray-6">Reports To:</span>
+                  <span class="font-medium text-ink-gray-9">{{ employeeInfo?.reports_to_name || 'Not specified' }}</span>
                 </div>
                 <div class="flex justify-between">
-                  <span class="text-gray-600">Status:</span>
+                  <span class="text-ink-gray-6">Status:</span>
                   <span :class="getStatusClass(employeeInfo?.status)">{{ employeeInfo?.status || 'Active' }}</span>
                 </div>
                 <div class="flex justify-between" v-if="employeeInfo?.holiday_list">
-                  <span class="text-gray-600">Holiday List:</span>
-                  <span class="font-medium text-gray-900">{{ employeeInfo.holiday_list }}</span>
+                  <span class="text-ink-gray-6">Holiday List:</span>
+                  <span class="font-medium text-ink-gray-9">{{ employeeInfo.holiday_list }}</span>
                 </div>
               </div>
             </div>
           </div>
 
           <!-- Emergency Contact Information -->
-          <div v-if="employeeInfo?.person_to_be_contacted || employeeInfo?.emergency_phone_number" class="mt-8 pt-6 border-t border-gray-200">
-            <h3 class="text-lg font-semibold text-gray-900 mb-4">Emergency Contact</h3>
+          <div v-if="employeeInfo?.person_to_be_contacted || employeeInfo?.emergency_phone_number" class="mt-8 pt-6 border-t border-outline-gray-2">
+            <h3 class="text-lg font-semibold text-ink-gray-9 mb-4">Emergency Contact</h3>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div v-if="employeeInfo?.person_to_be_contacted">
-                <span class="text-gray-600">Contact Person:</span>
-                <p class="font-medium text-gray-900">{{ employeeInfo.person_to_be_contacted }}</p>
+                <span class="text-ink-gray-6">Contact Person:</span>
+                <p class="font-medium text-ink-gray-9">{{ employeeInfo.person_to_be_contacted }}</p>
               </div>
               <div v-if="employeeInfo?.relation">
-                <span class="text-gray-600">Relation:</span>
-                <p class="font-medium text-gray-900">{{ employeeInfo.relation }}</p>
+                <span class="text-ink-gray-6">Relation:</span>
+                <p class="font-medium text-ink-gray-9">{{ employeeInfo.relation }}</p>
               </div>
               <div v-if="employeeInfo?.emergency_phone_number">
-                <span class="text-gray-600">Emergency Phone:</span>
-                <p class="font-medium text-gray-900">{{ employeeInfo.emergency_phone_number }}</p>
+                <span class="text-ink-gray-6">Emergency Phone:</span>
+                <p class="font-medium text-ink-gray-9">{{ employeeInfo.emergency_phone_number }}</p>
               </div>
             </div>
           </div>
 
           <!-- Address Information -->
-          <div v-if="employeeInfo?.current_address || employeeInfo?.permanent_address" class="mt-8 pt-6 border-t border-gray-200">
-            <h3 class="text-lg font-semibold text-gray-900 mb-4">Address Information</h3>
+          <div v-if="employeeInfo?.current_address || employeeInfo?.permanent_address" class="mt-8 pt-6 border-t border-outline-gray-2">
+            <h3 class="text-lg font-semibold text-ink-gray-9 mb-4">Address Information</h3>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div v-if="employeeInfo?.current_address">
-                <h4 class="font-medium text-gray-700 mb-2">Current Address</h4>
-                <p class="text-gray-600 text-sm">{{ employeeInfo.current_address }}</p>
+                <h4 class="font-medium text-ink-gray-7 mb-2">Current Address</h4>
+                <p class="text-ink-gray-6 text-sm">{{ employeeInfo.current_address }}</p>
               </div>
               <div v-if="employeeInfo?.permanent_address">
-                <h4 class="font-medium text-gray-700 mb-2">Permanent Address</h4>
-                <p class="text-gray-600 text-sm">{{ employeeInfo.permanent_address }}</p>
+                <h4 class="font-medium text-ink-gray-7 mb-2">Permanent Address</h4>
+                <p class="text-ink-gray-6 text-sm">{{ employeeInfo.permanent_address }}</p>
               </div>
             </div>
           </div>
@@ -190,16 +190,16 @@
         </div>
 
         <!-- Tab Navigation -->
-        <div class="bg-white rounded-xl shadow-sm border border-gray-200 mb-8">
-          <div class="border-b border-gray-200">
+        <div class="bg-surface-white rounded-xl shadow-sm border border-outline-gray-2 mb-8">
+          <div class="border-b border-outline-gray-2">
             <nav class="flex space-x-8 px-6" aria-label="Tabs">
               <button 
                 @click="activeTab = 'attendance'"
                 :class="[
                   'py-4 px-1 border-b-2 font-medium text-sm',
                   activeTab === 'attendance' 
-                    ? 'border-blue-500 text-blue-600' 
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                    ? 'border-ink-blue-3 text-ink-blue-3' 
+                    : 'border-transparent text-ink-gray-5 hover:text-ink-gray-7 hover:border-outline-gray-3'
                 ]"
               >
                 View Attendance
@@ -209,8 +209,8 @@
                 :class="[
                   'py-4 px-1 border-b-2 font-medium text-sm',
                   activeTab === 'leaves' 
-                    ? 'border-blue-500 text-blue-600' 
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                    ? 'border-ink-blue-3 text-ink-blue-3' 
+                    : 'border-transparent text-ink-gray-5 hover:text-ink-gray-7 hover:border-outline-gray-3'
                 ]"
               >
                 Leave Applications
@@ -220,8 +220,8 @@
                 :class="[
                   'py-4 px-1 border-b-2 font-medium text-sm',
                   activeTab === 'salary' 
-                    ? 'border-blue-500 text-blue-600' 
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                    ? 'border-ink-blue-3 text-ink-blue-3' 
+                    : 'border-transparent text-ink-gray-5 hover:text-ink-gray-7 hover:border-outline-gray-3'
                 ]"
               >
                 Salary Slips
@@ -234,23 +234,23 @@
             <!-- Attendance Tab -->
             <div v-if="activeTab === 'attendance'">
               <!-- Date Filter Controls -->
-              <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
+              <div class="bg-surface-blue-2 border border-outline-blue-1 rounded-lg p-4 mb-4">
                 <div class="flex flex-col sm:flex-row sm:items-center space-y-3 sm:space-y-0 sm:space-x-4">
-                  <label class="text-sm font-medium text-blue-900">Filter by Date:</label>
+                  <label class="text-sm font-medium text-ink-blue-3">Filter by Date:</label>
                   <div class="flex flex-col sm:flex-row sm:items-center space-y-2 sm:space-y-0 sm:space-x-2">
-                    <label class="text-xs text-blue-700">From:</label>
+                    <label class="text-xs text-ink-blue-2">From:</label>
                     <input
                       type="date"
                       v-model="attendanceFromDate"
-                      class="px-2 py-1 text-sm border border-blue-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500 w-full sm:w-auto"
+                      class="px-2 py-1 text-sm border border-outline-blue-1 rounded focus:outline-none focus:ring-1 focus:ring-ink-blue-3 w-full sm:w-auto"
                     />
                   </div>
                   <div class="flex flex-col sm:flex-row sm:items-center space-y-2 sm:space-y-0 sm:space-x-2">
-                    <label class="text-xs text-blue-700">To:</label>
+                    <label class="text-xs text-ink-blue-2">To:</label>
                     <input
                       type="date"
                       v-model="attendanceToDate"
-                      class="px-2 py-1 text-sm border border-blue-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500 w-full sm:w-auto"
+                      class="px-2 py-1 text-sm border border-outline-blue-1 rounded focus:outline-none focus:ring-1 focus:ring-ink-blue-3 w-full sm:w-auto"
                     />
                   </div>
                   <div class="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2">
@@ -270,17 +270,17 @@
                 </div>
               </div>
               
-              <div v-if="attendanceRecords.length === 0" class="text-center py-8 text-gray-500">
+              <div v-if="attendanceRecords.length === 0" class="text-center py-8 text-ink-gray-5">
                 No attendance records found
               </div>
               <div v-else class="space-y-3">
-                <div v-for="record in attendanceRecords" :key="record.name" class="flex justify-between items-center p-4 bg-gray-50 rounded-lg">
+                <div v-for="record in attendanceRecords" :key="record.name" class="flex justify-between items-center p-4 bg-surface-gray-2 rounded-lg">
                   <div>
-                    <p class="font-medium text-gray-900">{{ formatDate(record.attendance_date) }}</p>
-                    <p class="text-sm text-gray-600">{{ record.status }}</p>
-                    <p v-if="record.in_time" class="text-xs text-gray-500">In: {{ formatTime(record.in_time) }}</p>
-                    <p v-if="record.out_time" class="text-xs text-gray-500">Out: {{ formatTime(record.out_time) }}</p>
-                    <p class="text-xs text-gray-400">Status: {{ record.docstatus_label || 'Unknown' }}</p>
+                    <p class="font-medium text-ink-gray-9">{{ formatDate(record.attendance_date) }}</p>
+                    <p class="text-sm text-ink-gray-6">{{ record.status }}</p>
+                    <p v-if="record.in_time" class="text-xs text-ink-gray-5">In: {{ formatTime(record.in_time) }}</p>
+                    <p v-if="record.out_time" class="text-xs text-ink-gray-5">Out: {{ formatTime(record.out_time) }}</p>
+                    <p class="text-xs text-ink-gray-4">Status: {{ record.docstatus_label || 'Unknown' }}</p>
                   </div>
                   <div class="flex flex-col items-end space-y-1">
                     <span :class="getAttendanceStatusClass(record.status)" class="px-2 py-1 text-xs font-medium rounded-full">
@@ -297,23 +297,23 @@
             <!-- Leave Applications Tab -->
             <div v-if="activeTab === 'leaves'">
               <!-- Date Filter Controls -->
-              <div class="bg-green-50 border border-green-200 rounded-lg p-4 mb-4">
+              <div class="bg-surface-green-2 border border-outline-green-1 rounded-lg p-4 mb-4">
                 <div class="flex flex-col sm:flex-row sm:items-center space-y-3 sm:space-y-0 sm:space-x-4">
-                  <label class="text-sm font-medium text-green-900">Filter by Date:</label>
+                  <label class="text-sm font-medium text-ink-green-3">Filter by Date:</label>
                   <div class="flex flex-col sm:flex-row sm:items-center space-y-2 sm:space-y-0 sm:space-x-2">
-                    <label class="text-xs text-green-700">From:</label>
+                    <label class="text-xs text-ink-green-2">From:</label>
                     <input
                       type="date"
                       v-model="leaveFromDate"
-                      class="px-2 py-1 text-sm border border-green-300 rounded focus:outline-none focus:ring-1 focus:ring-green-500 w-full sm:w-auto"
+                      class="px-2 py-1 text-sm border border-outline-green-1 rounded focus:outline-none focus:ring-1 focus:ring-ink-green-3 w-full sm:w-auto"
                     />
                   </div>
                   <div class="flex flex-col sm:flex-row sm:items-center space-y-2 sm:space-y-0 sm:space-x-2">
-                    <label class="text-xs text-green-700">To:</label>
+                    <label class="text-xs text-ink-green-2">To:</label>
                     <input
                       type="date"
                       v-model="leaveToDate"
-                      class="px-2 py-1 text-sm border border-green-300 rounded focus:outline-none focus:ring-1 focus:ring-green-500 w-full sm:w-auto"
+                      class="px-2 py-1 text-sm border border-outline-green-1 rounded focus:outline-none focus:ring-1 focus:ring-ink-green-3 w-full sm:w-auto"
                     />
                   </div>
                   <div class="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2">

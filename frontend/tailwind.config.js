@@ -6,6 +6,7 @@ module.exports = {
 		"./node_modules/frappe-ui/src/components/**/*.{vue,js,ts,jsx,tsx}",
 		"../node_modules/frappe-ui/src/components/**/*.{vue,js,ts,jsx,tsx}",
 	],
+	darkMode: 'class',
 	theme: {
 		extend: {},
 	},

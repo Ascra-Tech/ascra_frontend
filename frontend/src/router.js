@@ -28,6 +28,12 @@ const routes = [
 		meta: { requiresAuth: true }
 	},
 	{
+		name: "TestSwitch",
+		path: "/test-switch",
+		component: () => import("@/pages/TestSwitch.vue"),
+		meta: { requiresAuth: false }
+	},
+	{
 		name: "EmployeeDashboard",
 		path: "/employee-dashboard",
 		component: () => import("@/pages/EmployeeDashboard.vue"),
