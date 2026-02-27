@@ -9,13 +9,26 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     AboutSection: typeof import('./src/components/AboutSection.vue')['default']
+    AppraisalView: typeof import('./src/components/AppraisalView.vue')['default']
+    AttendanceRegularizationForm: typeof import('./src/components/AttendanceRegularizationForm.vue')['default']
+    CompOffRequestForm: typeof import('./src/components/CompOffRequestForm.vue')['default']
     ContactSection: typeof import('./src/components/ContactSection.vue')['default']
+    ExitProcess: typeof import('./src/components/ExitProcess.vue')['default']
+    ExpenseClaimForm: typeof import('./src/components/ExpenseClaimForm.vue')['default']
+    FileUploadComponent: typeof import('./src/components/FileUploadComponent.vue')['default']
     FooterSection: typeof import('./src/components/FooterSection.vue')['default']
+    GrievanceSystem: typeof import('./src/components/GrievanceSystem.vue')['default']
     HeroSection: typeof import('./src/components/HeroSection.vue')['default']
+    LoanApplicationForm: typeof import('./src/components/LoanApplicationForm.vue')['default']
     Navigation: typeof import('./src/components/Navigation.vue')['default']
     PortfolioSection: typeof import('./src/components/PortfolioSection.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     ServicesSection: typeof import('./src/components/ServicesSection.vue')['default']
+    ShiftCalendar: typeof import('./src/components/ShiftCalendar.vue')['default']
+    TabButton: typeof import('./src/components/TabButton.vue')['default']
+    TaxDeclarationForm: typeof import('./src/components/TaxDeclarationForm.vue')['default']
+    TrainingPortal: typeof import('./src/components/TrainingPortal.vue')['default']
+    TravelRequestForm: typeof import('./src/components/TravelRequestForm.vue')['default']
   }
 }

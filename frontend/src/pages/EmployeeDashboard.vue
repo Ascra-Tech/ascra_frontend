@@ -166,73 +166,245 @@
 
         <!-- Quick Actions -->
         <div class="flex justify-center mb-6">
-          <div class="flex space-x-4">
+          <div class="flex flex-wrap gap-3 justify-center">
+            <!-- Check In Button -->
             <button 
-              @click="showAttendanceForm = true"
-              class="flex items-center space-x-2 px-6 py-3 bg-blue-600 text-white rounded-lg border border-blue-600 hover:bg-blue-700 hover:border-blue-700 transition-colors duration-200 shadow-sm"
+              @click="checkInAttendance('IN')"
+              :disabled="attendanceLoading"
+              class="flex items-center space-x-2 px-6 py-3 bg-green-600 text-white rounded-lg border border-green-600 hover:bg-green-700 hover:border-green-700 transition-colors duration-200 shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"/>
               </svg>
-              <span class="font-medium">Mark Attendance</span>
+              <span class="font-medium">Check In</span>
             </button>
             
+            <!-- Check Out Button -->
+            <button 
+              @click="checkInAttendance('OUT')"
+              :disabled="attendanceLoading"
+              class="flex items-center space-x-2 px-6 py-3 bg-orange-600 text-white rounded-lg border border-orange-600 hover:bg-orange-700 hover:border-orange-700 transition-colors duration-200 shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+              </svg>
+              <span class="font-medium">Check Out</span>
+            </button>
+            
+            <!-- Apply Leave Button -->
             <button 
               @click="showLeaveForm = true"
-              class="flex items-center space-x-2 px-6 py-3 bg-white text-green-600 rounded-lg border border-green-600 hover:bg-green-50 hover:border-green-700 hover:text-green-700 transition-colors duration-200 shadow-sm"
+              class="flex items-center space-x-2 px-6 py-3 bg-white text-blue-600 rounded-lg border border-blue-600 hover:bg-blue-50 hover:border-blue-700 hover:text-blue-700 transition-colors duration-200 shadow-sm"
             >
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
               </svg>
               <span class="font-medium">Apply Leave</span>
             </button>
+            
+            <!-- Bank Accounts Button -->
+            <button 
+              @click="showBankAccounts = true"
+              class="flex items-center space-x-2 px-6 py-3 bg-purple-600 text-white rounded-lg border border-purple-600 hover:bg-purple-700 hover:border-purple-700 transition-colors duration-200 shadow-sm"
+            >
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/>
+              </svg>
+              <span class="font-medium">Bank Accounts</span>
+            </button>
           </div>
         </div>
 
-        <!-- Tab Navigation -->
+        <!-- Sidebar Navigation -->
         <div class="bg-surface-white rounded-xl shadow-sm border border-outline-gray-2 mb-8">
-          <div class="border-b border-outline-gray-2">
-            <nav class="flex space-x-8 px-6" aria-label="Tabs">
-              <button 
-                @click="activeTab = 'attendance'"
-                :class="[
-                  'py-4 px-1 border-b-2 font-medium text-sm',
-                  activeTab === 'attendance' 
-                    ? 'border-ink-blue-3 text-ink-blue-3' 
-                    : 'border-transparent text-ink-gray-5 hover:text-ink-gray-7 hover:border-outline-gray-3'
-                ]"
-              >
-                View Attendance
-              </button>
-              <button 
-                @click="activeTab = 'leaves'"
-                :class="[
-                  'py-4 px-1 border-b-2 font-medium text-sm',
-                  activeTab === 'leaves' 
-                    ? 'border-ink-blue-3 text-ink-blue-3' 
-                    : 'border-transparent text-ink-gray-5 hover:text-ink-gray-7 hover:border-outline-gray-3'
-                ]"
-              >
-                Leave Applications
-              </button>
-              <button 
-                @click="activeTab = 'salary'; loadSalarySlips()"
-                :class="[
-                  'py-4 px-1 border-b-2 font-medium text-sm',
-                  activeTab === 'salary' 
-                    ? 'border-ink-blue-3 text-ink-blue-3' 
-                    : 'border-transparent text-ink-gray-5 hover:text-ink-gray-7 hover:border-outline-gray-3'
-                ]"
-              >
-                Salary Slips
-              </button>
-            </nav>
-          </div>
-
-          <!-- Tab Content -->
-          <div class="p-6">
-            <!-- Attendance Tab -->
-            <div v-if="activeTab === 'attendance'">
+          <div class="flex">
+            <!-- Custom Sidebar -->
+            <div class="w-64 border-r border-outline-gray-2 bg-gray-50">
+              <div class="p-4">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">Self Service Portal</h3>
+                
+                <!-- Core Functions -->
+                <div class="mb-6">
+                  <h4 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Core Functions</h4>
+                  <div class="space-y-1">
+                    <button 
+                      @click="activeTab = 'attendance'"
+                      :class="[
+                        'w-full text-left px-3 py-2 text-sm rounded-md transition-colors',
+                        activeTab === 'attendance' 
+                          ? 'bg-blue-100 text-blue-700 font-medium' 
+                          : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
+                      ]"
+                    >
+                      View Attendance
+                    </button>
+                    <button 
+                      @click="activeTab = 'leaves'"
+                      :class="[
+                        'w-full text-left px-3 py-2 text-sm rounded-md transition-colors',
+                        activeTab === 'leaves' 
+                          ? 'bg-blue-100 text-blue-700 font-medium' 
+                          : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
+                      ]"
+                    >
+                      Leave Applications
+                    </button>
+                    <button 
+                      @click="activeTab = 'salary'; loadSalarySlips()"
+                      :class="[
+                        'w-full text-left px-3 py-2 text-sm rounded-md transition-colors',
+                        activeTab === 'salary' 
+                          ? 'bg-blue-100 text-blue-700 font-medium' 
+                          : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
+                      ]"
+                    >
+                      Salary Slips
+                    </button>
+                  </div>
+                </div>
+                
+                <!-- Requests & Forms -->
+                <div class="mb-6">
+                  <h4 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Requests & Forms</h4>
+                  <div class="space-y-1">
+                    <button 
+                      @click="activeTab = 'expenses'"
+                      :class="[
+                        'w-full text-left px-3 py-2 text-sm rounded-md transition-colors',
+                        activeTab === 'expenses' 
+                          ? 'bg-blue-100 text-blue-700 font-medium' 
+                          : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
+                      ]"
+                    >
+                      Expense Claims
+                    </button>
+                    <button 
+                      @click="activeTab = 'regularization'"
+                      :class="[
+                        'w-full text-left px-3 py-2 text-sm rounded-md transition-colors',
+                        activeTab === 'regularization' 
+                          ? 'bg-blue-100 text-blue-700 font-medium' 
+                          : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
+                      ]"
+                    >
+                      Attendance Regularization
+                    </button>
+                    <button 
+                      @click="activeTab = 'compoff'"
+                      :class="[
+                        'w-full text-left px-3 py-2 text-sm rounded-md transition-colors',
+                        activeTab === 'compoff' 
+                          ? 'bg-blue-100 text-blue-700 font-medium' 
+                          : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
+                      ]"
+                    >
+                      Comp-off Requests
+                    </button>
+                    <button 
+                      @click="activeTab = 'shifts'"
+                      :class="[
+                        'w-full text-left px-3 py-2 text-sm rounded-md transition-colors',
+                        activeTab === 'shifts' 
+                          ? 'bg-blue-100 text-blue-700 font-medium' 
+                          : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
+                      ]"
+                    >
+                      Shift Schedule
+                    </button>
+                    <button 
+                      @click="activeTab = 'travel'"
+                      :class="[
+                        'w-full text-left px-3 py-2 text-sm rounded-md transition-colors',
+                        activeTab === 'travel' 
+                          ? 'bg-blue-100 text-blue-700 font-medium' 
+                          : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
+                      ]"
+                    >
+                      Travel Requests
+                    </button>
+                    <button 
+                      @click="activeTab = 'tax'"
+                      :class="[
+                        'w-full text-left px-3 py-2 text-sm rounded-md transition-colors',
+                        activeTab === 'tax' 
+                          ? 'bg-blue-100 text-blue-700 font-medium' 
+                          : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
+                      ]"
+                    >
+                      Tax Declarations
+                    </button>
+                    <button 
+                      @click="activeTab = 'loan'"
+                      :class="[
+                        'w-full text-left px-3 py-2 text-sm rounded-md transition-colors',
+                        activeTab === 'loan' 
+                          ? 'bg-blue-100 text-blue-700 font-medium' 
+                          : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
+                      ]"
+                    >
+                      Loan Applications
+                    </button>
+                  </div>
+                </div>
+                
+                <!-- HR Management -->
+                <div class="mb-6">
+                  <h4 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">HR Management</h4>
+                  <div class="space-y-1">
+                    <button 
+                      @click="activeTab = 'appraisal'"
+                      :class="[
+                        'w-full text-left px-3 py-2 text-sm rounded-md transition-colors',
+                        activeTab === 'appraisal' 
+                          ? 'bg-blue-100 text-blue-700 font-medium' 
+                          : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
+                      ]"
+                    >
+                      Performance
+                    </button>
+                    <button 
+                      @click="activeTab = 'training'"
+                      :class="[
+                        'w-full text-left px-3 py-2 text-sm rounded-md transition-colors',
+                        activeTab === 'training' 
+                          ? 'bg-blue-100 text-blue-700 font-medium' 
+                          : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
+                      ]"
+                    >
+                      Training
+                    </button>
+                    <button 
+                      @click="activeTab = 'grievance'"
+                      :class="[
+                        'w-full text-left px-3 py-2 text-sm rounded-md transition-colors',
+                        activeTab === 'grievance' 
+                          ? 'bg-blue-100 text-blue-700 font-medium' 
+                          : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
+                      ]"
+                    >
+                      Grievances
+                    </button>
+                    <button 
+                      @click="activeTab = 'exit'"
+                      :class="[
+                        'w-full text-left px-3 py-2 text-sm rounded-md transition-colors',
+                        activeTab === 'exit' 
+                          ? 'bg-blue-100 text-blue-700 font-medium' 
+                          : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
+                      ]"
+                    >
+                      Exit Process
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Main Content -->
+            <div class="flex-1">
+              <div class="p-6">
+                <!-- Attendance Tab -->
+                <div v-if="activeTab === 'attendance'">
               <!-- Date Filter Controls -->
               <div class="bg-surface-blue-2 border border-outline-blue-1 rounded-lg p-4 mb-4">
                 <div class="flex flex-col sm:flex-row sm:items-center space-y-3 sm:space-y-0 sm:space-x-4">
@@ -267,6 +439,35 @@
                       Clear
                     </button>
                   </div>
+                </div>
+              </div>
+              
+              <!-- Upcoming Holidays -->
+              <div v-if="holidays.length > 0" class="bg-amber-50 border border-amber-200 rounded-lg p-4 mb-4">
+                <h4 class="text-sm font-semibold text-amber-900 mb-3">Upcoming Holidays</h4>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                  <div 
+                    v-for="holiday in holidays.slice(0, 6)" 
+                    :key="holiday.holiday_date"
+                    class="flex items-center space-x-3 p-2 bg-white rounded border border-amber-100"
+                  >
+                    <div class="flex-shrink-0">
+                      <div class="w-8 h-8 bg-amber-100 rounded-full flex items-center justify-center">
+                        <svg class="w-4 h-4 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                      </div>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                      <p class="text-sm font-medium text-gray-900 truncate">{{ holiday.description }}</p>
+                      <p class="text-xs text-gray-500">{{ formatDate(holiday.holiday_date) }}</p>
+                    </div>
+                  </div>
+                </div>
+                <div v-if="holidays.length > 6" class="mt-3 text-center">
+                  <button class="text-xs text-amber-600 hover:text-amber-700 font-medium">
+                    View {{ holidays.length - 6 }} more holidays →
+                  </button>
                 </div>
               </div>
               
@@ -448,6 +649,180 @@
                 </div>
               </div>
             </div>
+
+            <!-- Expense Claims Tab -->
+            <div v-if="activeTab === 'expenses'">
+              <div class="flex justify-between items-center mb-6">
+                <h4 class="text-lg font-medium text-gray-900">Expense Claims</h4>
+                <button 
+                  @click="showExpenseClaimForm = true"
+                  class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium"
+                >
+                  + New Expense Claim
+                </button>
+              </div>
+              
+              <div class="text-center py-8 text-gray-500">
+                <svg class="mx-auto h-12 w-12 text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"/>
+                </svg>
+                <p class="text-lg font-medium text-gray-900 mb-2">No Expense Claims Found</p>
+                <p class="text-sm text-gray-500">Submit your first expense claim to get started</p>
+              </div>
+            </div>
+
+            <!-- Attendance Regularization Tab -->
+            <div v-if="activeTab === 'regularization'">
+              <div class="flex justify-between items-center mb-6">
+                <h4 class="text-lg font-medium text-gray-900">Attendance Regularization Requests</h4>
+                <button 
+                  @click="showRegularizationForm = true"
+                  class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium"
+                >
+                  + New Request
+                </button>
+              </div>
+              
+              <div class="text-center py-8 text-gray-500">
+                <svg class="mx-auto h-12 w-12 text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+                <p class="text-lg font-medium text-gray-900 mb-2">No Regularization Requests Found</p>
+                <p class="text-sm text-gray-500">Submit a request to regularize your attendance</p>
+              </div>
+            </div>
+
+            <!-- Comp-off Requests Tab -->
+            <div v-if="activeTab === 'compoff'">
+              <div class="flex justify-between items-center mb-6">
+                <h4 class="text-lg font-medium text-gray-900">Comp-off Requests</h4>
+                <button 
+                  @click="showCompOffForm = true"
+                  class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium"
+                >
+                  + New Comp-off Request
+                </button>
+              </div>
+              
+              <div class="text-center py-8 text-gray-500">
+                <svg class="mx-auto h-12 w-12 text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                </svg>
+                <p class="text-lg font-medium text-gray-900 mb-2">No Comp-off Requests Found</p>
+                <p class="text-sm text-gray-500">Request compensatory leave for extra work hours</p>
+              </div>
+            </div>
+
+            <!-- Shift Schedule Tab -->
+            <div v-if="activeTab === 'shifts'">
+              <h4 class="text-lg font-medium text-gray-900 mb-6">Shift Schedule</h4>
+              <ShiftCalendar v-if="employeeInfo?.name" :employee-id="employeeInfo.name" />
+              <div v-else class="text-center py-8 text-gray-500">
+                <p class="text-lg font-medium text-gray-900 mb-2">Employee Information Required</p>
+                <p class="text-sm text-gray-500">Please ensure your employee record is linked</p>
+              </div>
+            </div>
+
+            <!-- Travel Requests Tab -->
+            <div v-if="activeTab === 'travel'">
+              <div class="flex justify-between items-center mb-6">
+                <h4 class="text-lg font-medium text-gray-900">Travel Requests</h4>
+                <button 
+                  @click="showTravelForm = true"
+                  class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium"
+                >
+                  + New Travel Request
+                </button>
+              </div>
+              
+              <div class="text-center py-8 text-gray-500">
+                <svg class="mx-auto h-12 w-12 text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2v1a2 2 0 002 2 2.5 2.5 0 012.5 2.5v.5a2 2 0 012 2v2a2 2 0 002 2h2a2 2 0 002-2v-2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2v1a2 2 0 002 2 2.5 2.5 0 012.5 2.5v.5a2 2 0 012 2v2a2 2 0 002 2h2a2 2 0 002-2v-2.945"/>
+                </svg>
+                <p class="text-lg font-medium text-gray-900 mb-2">No Travel Requests Found</p>
+                <p class="text-sm text-gray-500">Submit a travel request for business trips</p>
+              </div>
+            </div>
+
+            <!-- Tax Declarations Tab -->
+            <div v-if="activeTab === 'tax'">
+              <div class="flex justify-between items-center mb-6">
+                <h4 class="text-lg font-medium text-gray-900">Tax Declarations</h4>
+                <button 
+                  @click="showTaxForm = true"
+                  class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium"
+                >
+                  + New Tax Declaration
+                </button>
+              </div>
+              
+              <div class="text-center py-8 text-gray-500">
+                <svg class="mx-auto h-12 w-12 text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                </svg>
+                <p class="text-lg font-medium text-gray-900 mb-2">No Tax Declarations Found</p>
+                <p class="text-sm text-gray-500">Submit your tax savings declarations</p>
+              </div>
+            </div>
+
+            <!-- Loan Applications Tab -->
+            <div v-if="activeTab === 'loan'">
+              <div class="flex justify-between items-center mb-6">
+                <h4 class="text-lg font-medium text-gray-900">Loan Applications</h4>
+                <button 
+                  @click="showLoanForm = true"
+                  class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium"
+                >
+                  + New Loan Application
+                </button>
+              </div>
+              
+              <div class="text-center py-8 text-gray-500">
+                <svg class="mx-auto h-12 w-12 text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/>
+                </svg>
+                <p class="text-lg font-medium text-gray-900 mb-2">No Loan Applications Found</p>
+                <p class="text-sm text-gray-500">Apply for company loans and advances</p>
+              </div>
+            </div>
+
+            <!-- Performance Appraisal Tab -->
+            <div v-if="activeTab === 'appraisal'">
+              <AppraisalView v-if="employeeInfo?.name" :employee-id="employeeInfo.name" />
+              <div v-else class="text-center py-8 text-gray-500">
+                <p class="text-lg font-medium text-gray-900 mb-2">Employee Information Required</p>
+                <p class="text-sm text-gray-500">Please ensure your employee record is linked</p>
+              </div>
+            </div>
+
+            <!-- Training Portal Tab -->
+            <div v-if="activeTab === 'training'">
+              <TrainingPortal v-if="employeeInfo?.name" :employee-id="employeeInfo.name" />
+              <div v-else class="text-center py-8 text-gray-500">
+                <p class="text-lg font-medium text-gray-900 mb-2">Employee Information Required</p>
+                <p class="text-sm text-gray-500">Please ensure your employee record is linked</p>
+              </div>
+            </div>
+
+            <!-- Grievance System Tab -->
+            <div v-if="activeTab === 'grievance'">
+              <GrievanceSystem v-if="employeeInfo?.name" :employee-id="employeeInfo.name" />
+              <div v-else class="text-center py-8 text-gray-500">
+                <p class="text-lg font-medium text-gray-900 mb-2">Employee Information Required</p>
+                <p class="text-sm text-gray-500">Please ensure your employee record is linked</p>
+              </div>
+            </div>
+
+            <!-- Exit Process Tab -->
+            <div v-if="activeTab === 'exit'">
+              <ExitProcess v-if="employeeInfo?.name" :employee-id="employeeInfo.name" />
+              <div v-else class="text-center py-8 text-gray-500">
+                <p class="text-lg font-medium text-gray-900 mb-2">Employee Information Required</p>
+                <p class="text-sm text-gray-500">Please ensure your employee record is linked</p>
+              </div>
+            </div>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -485,7 +860,12 @@
         <form @submit.prevent="submitLeaveApplication" class="space-y-4">
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-2">Leave Type</label>
-            <select v-model="leaveForm.leaveType" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+            <select 
+              v-model="leaveForm.leaveType" 
+              @change="loadLeaveBalanceForType"
+              required 
+              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            >
               <option value="">Select Leave Type</option>
               <option v-for="leaveType in availableLeaveTypes" :key="leaveType.name" :value="leaveType.name">
                 {{ leaveType.leave_type_name }}
@@ -493,14 +873,63 @@
             </select>
           </div>
           
+          <!-- Real-time Leave Balance Display -->
+          <div v-if="selectedLeaveBalance" class="bg-blue-50 border border-blue-200 rounded-lg p-3">
+            <div class="flex justify-between items-center">
+              <span class="text-sm font-medium text-blue-900">Available Balance:</span>
+              <span class="text-lg font-bold text-blue-600">{{ selectedLeaveBalance.leaves_remaining }} days</span>
+            </div>
+            <div class="text-xs text-blue-700 mt-1">
+              Total: {{ selectedLeaveBalance.total_leaves_allocated }} days | 
+              Used: {{ selectedLeaveBalance.leaves_taken }} days
+            </div>
+            <div v-if="selectedLeaveBalance.valid_from && selectedLeaveBalance.valid_to" class="text-xs text-blue-600 mt-1">
+              Valid: {{ formatDate(selectedLeaveBalance.valid_from) }} - {{ formatDate(selectedLeaveBalance.valid_to) }}
+            </div>
+          </div>
+          
           <div class="grid grid-cols-2 gap-4">
             <div>
               <label class="block text-sm font-medium text-gray-700 mb-2">From Date</label>
-              <input v-model="leaveForm.fromDate" type="date" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+              <input 
+                v-model="leaveForm.fromDate" 
+                @change="calculateLeaveDays"
+                type="date" 
+                required 
+                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              />
             </div>
             <div>
               <label class="block text-sm font-medium text-gray-700 mb-2">To Date</label>
-              <input v-model="leaveForm.toDate" type="date" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+              <input 
+                v-model="leaveForm.toDate" 
+                @change="calculateLeaveDays"
+                type="date" 
+                required 
+                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              />
+            </div>
+          </div>
+          
+          <!-- Leave Days Calculation -->
+          <div v-if="calculatedLeaveDays > 0" class="bg-gray-50 border border-gray-200 rounded-lg p-3">
+            <div class="flex justify-between items-center">
+              <span class="text-sm font-medium text-gray-700">Requested Days:</span>
+              <span class="text-lg font-bold text-gray-900">{{ calculatedLeaveDays }} days</span>
+            </div>
+            <div v-if="selectedLeaveBalance" class="mt-2">
+              <div class="flex justify-between items-center">
+                <span class="text-sm text-gray-600">Balance After Request:</span>
+                <span :class="[
+                  'font-bold',
+                  selectedLeaveBalance.leaves_remaining - calculatedLeaveDays < 0 ? 'text-red-600' : 'text-green-600'
+                ]">
+                  {{ selectedLeaveBalance.leaves_remaining - calculatedLeaveDays }} days
+                </span>
+              </div>
+              <div v-if="selectedLeaveBalance.leaves_remaining - calculatedLeaveDays < 0" class="mt-2 text-xs text-red-600">
+                ⚠️ Insufficient leave balance! You have {{ selectedLeaveBalance.leaves_remaining }} days available but are requesting {{ calculatedLeaveDays }} days.
+              </div>
             </div>
           </div>
           
@@ -510,7 +939,14 @@
           </div>
           
           <div class="flex space-x-3">
-            <Button type="submit" theme="blue" variant="solid" class="flex-1" :loading="leaveLoading">
+            <Button 
+              type="submit" 
+              theme="blue" 
+              variant="solid" 
+              class="flex-1" 
+              :loading="leaveLoading"
+              :disabled="selectedLeaveBalance && selectedLeaveBalance.leaves_remaining - calculatedLeaveDays < 0"
+            >
               Submit Application
             </Button>
             <Button type="button" theme="gray" variant="outline" @click="showLeaveForm = false">
@@ -663,13 +1099,130 @@
         </div>
       </div>
     </div>
+
+    <!-- Bank Accounts Modal -->
+    <div v-if="showBankAccounts" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div class="bg-white rounded-xl p-6 w-full max-w-2xl mx-4 max-h-[80vh] overflow-y-auto">
+        <div class="flex justify-between items-center mb-6">
+          <h3 class="text-xl font-semibold text-gray-900">Bank Accounts</h3>
+          <button @click="showBankAccounts = false" class="text-gray-400 hover:text-gray-600">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+            </svg>
+          </button>
+        </div>
+        
+        <div v-if="bankAccounts.length === 0" class="text-center py-8">
+          <svg class="mx-auto h-12 w-12 text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/>
+          </svg>
+          <p class="text-gray-500">No bank accounts found</p>
+          <p class="text-sm text-gray-400 mt-2">Contact HR to add your bank account details</p>
+        </div>
+        
+        <div v-else class="space-y-4">
+          <div v-for="account in bankAccounts" :key="account.name" class="border border-gray-200 rounded-lg p-4 hover:bg-gray-50 transition-colors">
+            <div class="flex items-start justify-between">
+              <div class="flex-1">
+                <div class="flex items-center space-x-2 mb-2">
+                  <h4 class="font-semibold text-gray-900">{{ account.bank_name }}</h4>
+                  <span v-if="account.default === 1" class="px-2 py-1 text-xs font-medium bg-green-100 text-green-800 rounded-full">Default</span>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                  <div>
+                    <span class="text-gray-600">Account Name:</span>
+                    <p class="font-medium text-gray-900">{{ account.account_name || 'N/A' }}</p>
+                  </div>
+                  <div>
+                    <span class="text-gray-600">Account Number:</span>
+                    <p class="font-medium text-gray-900">{{ account.account_number || 'N/A' }}</p>
+                  </div>
+                  <div v-if="account.iban">
+                    <span class="text-gray-600">IBAN:</span>
+                    <p class="font-medium text-gray-900">{{ account.iban }}</p>
+                  </div>
+                  <div v-if="account.bank_branch">
+                    <span class="text-gray-600">Branch:</span>
+                    <p class="font-medium text-gray-900">{{ account.bank_branch }}</p>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="ml-4 flex-shrink-0">
+                <div class="bg-blue-100 rounded-full p-3">
+                  <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/>
+                  </svg>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="mt-6 pt-4 border-t border-gray-200">
+          <p class="text-xs text-gray-500 text-center">
+            For any changes to your bank account details, please contact the HR department.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Phase 2 Form Modals -->
+    <ExpenseClaimForm 
+      v-if="showExpenseClaimForm" 
+      @close="showExpenseClaimForm = false"
+      @success="handleFormSuccess"
+    />
+    
+    <AttendanceRegularizationForm 
+      v-if="showRegularizationForm" 
+      @close="showRegularizationForm = false"
+      @success="handleFormSuccess"
+    />
+    
+    <CompOffRequestForm 
+      v-if="showCompOffForm" 
+      @close="showCompOffForm = false"
+      @success="handleFormSuccess"
+    />
+    
+    <TravelRequestForm 
+      v-if="showTravelForm" 
+      @close="showTravelForm = false"
+      @success="handleFormSuccess"
+    />
+    
+    <TaxDeclarationForm 
+      v-if="showTaxForm" 
+      @close="showTaxForm = false"
+      @success="handleFormSuccess"
+    />
+    
+    <LoanApplicationForm 
+      v-if="showLoanForm" 
+      @close="showLoanForm = false"
+      @success="handleFormSuccess"
+    />
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, reactive } from 'vue'
 import { call } from 'frappe-ui'
 import Navigation from '../components/Navigation.vue'
+import ExpenseClaimForm from '../components/ExpenseClaimForm.vue'
+import FileUploadComponent from '../components/FileUploadComponent.vue'
+import AttendanceRegularizationForm from '../components/AttendanceRegularizationForm.vue'
+import CompOffRequestForm from '../components/CompOffRequestForm.vue'
+import ShiftCalendar from '../components/ShiftCalendar.vue'
+import TravelRequestForm from '../components/TravelRequestForm.vue'
+import TaxDeclarationForm from '../components/TaxDeclarationForm.vue'
+import LoanApplicationForm from '../components/LoanApplicationForm.vue'
+import AppraisalView from '../components/AppraisalView.vue'
+import TrainingPortal from '../components/TrainingPortal.vue'
+import GrievanceSystem from '../components/GrievanceSystem.vue'
+import ExitProcess from '../components/ExitProcess.vue'
 
 // Reactive data
 const loading = ref(true)
@@ -684,6 +1237,7 @@ const leaveLoading = ref(false)
 const showLeaveForm = ref(false)
 const showAttendanceForm = ref(false)
 const activeTab = ref('attendance')
+
 const salarySlips = ref([])
 const showPreviewModal = ref(false)
 const previewLoading = ref(false)
@@ -700,6 +1254,21 @@ const salaryToDate = ref('')
 const leaveFromDate = ref('')
 const leaveToDate = ref('')
 const availableLeaveTypes = ref([])
+
+// Enhanced leave functionality
+const selectedLeaveBalance = ref(null)
+const calculatedLeaveDays = ref(0)
+const holidays = ref([])
+const bankAccounts = ref([])
+const showBankAccounts = ref(false)
+
+// Phase 2 form modals
+const showExpenseClaimForm = ref(false)
+const showRegularizationForm = ref(false)
+const showCompOffForm = ref(false)
+const showTravelForm = ref(false)
+const showTaxForm = ref(false)
+const showLoanForm = ref(false)
 
 // Custom confirmation modal
 const showConfirmationModal = ref(false)
@@ -1153,6 +1722,114 @@ const clearLeaveFilter = () => {
   loadLeaveApplications()
 }
 
+// Enhanced leave functionality methods
+const loadLeaveBalanceForType = async () => {
+  if (!leaveForm.value.leaveType) {
+    selectedLeaveBalance.value = null
+    return
+  }
+  
+  try {
+    const response = await call('ascra_frontend.api.get_leave_balance_for_date', {
+      date: leaveForm.value.fromDate || new Date().toISOString().split('T')[0]
+    })
+    
+    if (response.success) {
+      const balance = response.leave_balance.find(b => b.leave_type === leaveForm.value.leaveType)
+      selectedLeaveBalance.value = balance || null
+    }
+  } catch (err) {
+    console.error('Error loading leave balance for type:', err)
+    selectedLeaveBalance.value = null
+  }
+}
+
+const calculateLeaveDays = () => {
+  if (!leaveForm.value.fromDate || !leaveForm.value.toDate) {
+    calculatedLeaveDays.value = 0
+    return
+  }
+  
+  const fromDate = new Date(leaveForm.value.fromDate)
+  const toDate = new Date(leaveForm.value.toDate)
+  
+  if (fromDate > toDate) {
+    calculatedLeaveDays.value = 0
+    return
+  }
+  
+  // Calculate business days (excluding weekends)
+  let days = 0
+  const currentDate = new Date(fromDate)
+  
+  while (currentDate <= toDate) {
+    const dayOfWeek = currentDate.getDay()
+    // Exclude weekends (0 = Sunday, 6 = Saturday)
+    if (dayOfWeek !== 0 && dayOfWeek !== 6) {
+      days++
+    }
+    currentDate.setDate(currentDate.getDate() + 1)
+  }
+  
+  calculatedLeaveDays.value = days
+  
+  // Reload leave balance if we have a selected type
+  if (leaveForm.value.leaveType) {
+    loadLeaveBalanceForType()
+  }
+}
+
+const loadHolidays = async () => {
+  try {
+    const response = await call('ascra_frontend.api.get_holiday_list')
+    if (response.success) {
+      holidays.value = response.holidays || []
+    }
+  } catch (err) {
+    console.error('Error loading holidays:', err)
+    holidays.value = []
+  }
+}
+
+const loadBankAccounts = async () => {
+  try {
+    const response = await call('ascra_frontend.api.get_employee_bank_accounts')
+    if (response.success) {
+      bankAccounts.value = response.bank_accounts || []
+    }
+  } catch (err) {
+    console.error('Error loading bank accounts:', err)
+    bankAccounts.value = []
+  }
+}
+
+const checkInAttendance = async (logType = 'IN') => {
+  try {
+    attendanceLoading.value = true
+    
+    const response = await call('ascra_frontend.api.check_in_attendance', {
+      log_type: logType
+    })
+    
+    if (response.success) {
+      showCustomConfirmation(response.message, 'success')
+      await loadAttendanceRecords()
+    } else {
+      showCustomConfirmation(response.message || 'Failed to mark attendance', 'error')
+    }
+  } catch (err) {
+    console.error('Error checking in attendance:', err)
+    showCustomConfirmation('Failed to mark attendance. Please try again.', 'error')
+  } finally {
+    attendanceLoading.value = false
+  }
+}
+
+// Handle form success for Phase 2 components
+const handleFormSuccess = (message) => {
+  showCustomConfirmation(message, 'success')
+}
+
 // Initialize dashboard
 onMounted(async () => {
   try {
@@ -1163,7 +1840,9 @@ onMounted(async () => {
       loadLeaveApplications(),
       loadLeaveBalance(),
       loadPrintFormats(),
-      loadAvailableLeaveTypes()
+      loadAvailableLeaveTypes(),
+      loadHolidays(),
+      loadBankAccounts()
     ])
   } catch (err) {
     console.error('Error initializing employee dashboard:', err)
@@ -1216,5 +1895,14 @@ onMounted(async () => {
 .salary-slip-preview h3 {
   margin: 10px 0;
   color: #333;
+}
+
+/* Hide scrollbar for desktop tab navigation */
+.scrollbar-hide {
+  -ms-overflow-style: none;  /* Internet Explorer 10+ */
+  scrollbar-width: none;     /* Firefox */
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;  /* Safari and Chrome */
 }
 </style>

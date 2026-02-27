@@ -38,18 +38,22 @@ export function useTheme() {
 
   // Set theme
   const setTheme = (dark) => {
+    console.log('setTheme called with:', dark)
     isDark.value = dark
     applyTheme(dark)
     
     // Save to localStorage
     if (typeof window !== 'undefined') {
       localStorage.setItem('theme', dark ? 'dark' : 'light')
+      console.log('Theme saved to localStorage:', dark ? 'dark' : 'light')
     }
   }
 
   // Toggle theme
   const toggleTheme = () => {
-    setTheme(!isDark.value)
+    const newValue = !isDark.value
+    console.log('Theme toggle called:', { current: isDark.value, new: newValue })
+    setTheme(newValue)
   }
 
   // Set system theme
@@ -65,10 +69,13 @@ export function useTheme() {
   const initTheme = () => {
     const saved = getSavedTheme()
     if (saved !== null) {
-      setTheme(saved)
+      isDark.value = saved
+      applyTheme(saved)
     } else {
       // Use system preference as default
-      setSystemTheme()
+      const systemDark = checkSystemPreference()
+      isDark.value = systemDark
+      applyTheme(systemDark)
     }
   }
 

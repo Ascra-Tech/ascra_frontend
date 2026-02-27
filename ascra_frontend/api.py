@@ -1321,3 +1321,201 @@ def check_user_roles():
                 "is_employee": False
             }
         }
+
+@frappe.whitelist()
+def get_leave_balance_for_date(employee=None, date=None):
+    """
+    Get real-time leave balance for a specific date
+    """
+    try:
+        user = frappe.session.user
+        if user == "Guest":
+            frappe.throw(_("Please login to access leave information"))
+        
+        # Get employee record
+        if not employee:
+            employee = frappe.db.get_value("Employee", {"user_id": user}, "name")
+        if not employee:
+            frappe.throw(_("Employee record not found for this user"))
+        
+        # Use provided date or today
+        check_date = date or today()
+        
+        # Get leave allocations valid for this date
+        leave_allocations = frappe.get_all("Leave Allocation",
+            filters={
+                "employee": employee,
+                "docstatus": 1,
+                "from_date": ["<=", check_date],
+                "to_date": [">=", check_date]
+            },
+            fields=["leave_type", "new_leaves_allocated", "total_leaves_allocated", "from_date", "to_date"]
+        )
+        
+        # Calculate leaves taken for each leave type
+        leave_balance = []
+        for allocation in leave_allocations:
+            # Get approved leave applications for this leave type
+            leaves_taken = frappe.db.sql("""
+                SELECT COALESCE(SUM(total_leave_days), 0) as leaves_taken
+                FROM `tabLeave Application`
+                WHERE employee = %s 
+                AND leave_type = %s 
+                AND status = 'Approved'
+                AND docstatus = 1
+                AND from_date >= %s
+                AND to_date <= %s
+            """, (employee, allocation.leave_type, allocation.from_date, allocation.to_date))[0][0] or 0
+            
+            leave_balance.append({
+                "leave_type": allocation.leave_type,
+                "total_leaves_allocated": allocation.total_leaves_allocated,
+                "leaves_taken": leaves_taken,
+                "leaves_remaining": allocation.total_leaves_allocated - leaves_taken,
+                "valid_from": allocation.from_date,
+                "valid_to": allocation.to_date
+            })
+        
+        return {
+            "success": True,
+            "leave_balance": leave_balance,
+            "check_date": check_date
+        }
+        
+    except Exception as e:
+        print(f"Get leave balance for date error: {str(e)}")
+        return {
+            "success": False,
+            "message": str(e)
+        }
+
+@frappe.whitelist()
+def check_in_attendance(log_type="IN", timestamp=None):
+    """
+    Mark employee check-in or check-out
+    """
+    try:
+        user = frappe.session.user
+        if user == "Guest":
+            frappe.throw(_("Please login to mark attendance"))
+        
+        # Get employee record
+        employee = frappe.db.get_value("Employee", {"user_id": user}, "name")
+        if not employee:
+            frappe.throw(_("Employee record not found for this user"))
+        
+        # Use provided timestamp or current time
+        check_time = timestamp or now_datetime()
+        
+        # Import the check-in method
+        from hrms.hr.doctype.employee_checkin.employee_checkin import add_log_based_on_employee_field
+        
+        # Mark attendance
+        log_id = add_log_based_on_employee_field({
+            "employee_field_value": employee,
+            "log_type": log_type,
+            "timestamp": check_time
+        })
+        
+        return {
+            "success": True,
+            "message": f"Successfully marked {log_type.lower()} at {check_time}",
+            "log_id": log_id,
+            "timestamp": str(check_time)
+        }
+        
+    except Exception as e:
+        print(f"Check-in attendance error: {str(e)}")
+        return {
+            "success": False,
+            "message": str(e)
+        }
+
+@frappe.whitelist()
+def get_holiday_list():
+    """
+    Get company holidays for current year
+    """
+    try:
+        user = frappe.session.user
+        if user == "Guest":
+            frappe.throw(_("Please login to access holiday information"))
+        
+        # Get employee record
+        employee = frappe.db.get_value("Employee", {"user_id": user}, ["name", "holiday_list", "company"])
+        if not employee:
+            frappe.throw(_("Employee record not found for this user"))
+        
+        employee_name, holiday_list, company = employee
+        
+        # Get default holiday list if not assigned to employee
+        if not holiday_list:
+            holiday_list = frappe.db.get_value("Company", company, "default_holiday_list")
+        
+        if not holiday_list:
+            return {
+                "success": True,
+                "holidays": [],
+                "message": "No holiday list assigned"
+            }
+        
+        # Get holidays for current year
+        current_year = today().year
+        holidays = frappe.get_all("Holiday",
+            filters={
+                "parent": holiday_list,
+                "holiday_date": ["between", [f"{current_year}-01-01", f"{current_year}-12-31"]]
+            },
+            fields=["holiday_date", "description"],
+            order_by="holiday_date"
+        )
+        
+        return {
+            "success": True,
+            "holidays": holidays,
+            "holiday_list": holiday_list,
+            "year": current_year
+        }
+        
+    except Exception as e:
+        print(f"Get holiday list error: {str(e)}")
+        return {
+            "success": False,
+            "message": str(e)
+        }
+
+@frappe.whitelist()
+def get_employee_bank_accounts():
+    """
+    Get employee bank account information
+    """
+    try:
+        user = frappe.session.user
+        if user == "Guest":
+            frappe.throw(_("Please login to access bank information"))
+        
+        # Get employee record
+        employee = frappe.db.get_value("Employee", {"user_id": user}, "name")
+        if not employee:
+            frappe.throw(_("Employee record not found for this user"))
+        
+        # Get bank accounts
+        bank_accounts = frappe.get_all("Employee Bank Account",
+            filters={
+                "employee": employee,
+                "docstatus": 1
+            },
+            fields=["name", "bank_name", "account_name", "account_number", "iban", "bank_branch", "default"]
+        )
+        
+        return {
+            "success": True,
+            "bank_accounts": bank_accounts
+        }
+        
+    except Exception as e:
+        print(f"Get employee bank accounts error: {str(e)}")
+        return {
+            "success": False,
+            "message": str(e)
+        }
