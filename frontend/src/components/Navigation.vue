@@ -93,6 +93,15 @@
             <span class="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
           </button>
 
+          <!-- PWA Install Button -->
+          <button 
+            v-if="pwa.isInstallable && session.isLoggedIn"
+            @click="pwa.install"
+            class="px-3 py-2 bg-blue-600 text-white rounded-md text-sm font-medium hover:bg-blue-700 transition-colors"
+          >
+            Install App
+          </button>
+
           <!-- Help Dropdown -->
           <Dropdown :options="helpMenuOptions" v-if="session.isLoggedIn">
             <template #default="{ open }">
@@ -246,8 +255,10 @@ import { ref, onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { call, Button, Dropdown, Avatar } from 'frappe-ui'
 import { session } from '../data/session'
+import { usePWA } from '@/composables/usePWA'
 
 const router = useRouter()
+const pwa = usePWA()
 
 // State
 const mobileMenuOpen = ref(false)
